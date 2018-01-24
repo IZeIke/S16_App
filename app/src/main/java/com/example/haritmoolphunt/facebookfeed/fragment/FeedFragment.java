@@ -34,6 +34,7 @@ import org.json.JSONObject;
 
 public class FeedFragment extends Fragment {
 
+    String pageID;
     RecyclerView recyclerView;
     FeedListAdapter feedListAdapter;
 
@@ -41,9 +42,10 @@ public class FeedFragment extends Fragment {
         super();
     }
 
-    public static FeedFragment newInstance() {
+    public static FeedFragment newInstance(String pageid) {
         FeedFragment fragment = new FeedFragment();
         Bundle args = new Bundle();
+        args.putString("pageID",pageid);
         fragment.setArguments(args);
         return fragment;
     }
@@ -51,6 +53,7 @@ public class FeedFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        pageID = getArguments().getString("pageID");
         init(savedInstanceState);
 
         if (savedInstanceState != null)
@@ -69,28 +72,9 @@ public class FeedFragment extends Fragment {
     private void init(Bundle savedInstanceState) {
         // Init Fragment level's variable(s) here
 
-     /*   GraphRequest request = GraphRequest.newGraphPathRequest(
-                AccessToken.getCurrentAccessToken(),
-                "/",
-                new GraphRequest.Callback() {
-                    @Override
-                    public void onCompleted(GraphResponse response) {
-                        Gson gson = new Gson();
-                        Posts posts = gson.fromJson(response.getJSONObject().toString(), Posts.class);
-                        System.out.println(posts.getFeed().get(0).getMessage());
-
-                    }
-                });
-
-        Bundle parameters = new Bundle();
-        parameters.putString("ids", "737460709751015");
-        parameters.putString("fields", "name,picture{url},posts{id,created_time,message,attachments{media{image{src}},title,type,url,subattachments{media{image{src}}}}}");
-        request.setParameters(parameters);
-        request.executeAsync(); */
-
         GraphRequest request = GraphRequest.newGraphPathRequest(
                 AccessToken.getCurrentAccessToken(),
-                "/737460709751015/posts",
+                "/"+pageID+"/posts",
                 new GraphRequest.Callback() {
                     @Override
                     public void onCompleted(GraphResponse response) {
@@ -110,7 +94,7 @@ public class FeedFragment extends Fragment {
 
         GraphRequest request2 = GraphRequest.newGraphPathRequest(
                 AccessToken.getCurrentAccessToken(),
-                "/737460709751015",
+                "/"+pageID,
                 new GraphRequest.Callback() {
                     @Override
                     public void onCompleted(GraphResponse response) {

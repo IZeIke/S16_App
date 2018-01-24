@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.example.haritmoolphunt.facebookfeed.R;
 import com.example.haritmoolphunt.facebookfeed.fragment.FeedFragment;
@@ -35,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
             }else{
 
                 getSupportFragmentManager().beginTransaction()
-                        .add(R.id.contentContainer, FeedFragment.newInstance())
+                        .add(R.id.contentContainer, FeedFragment.newInstance(getString(R.string.Mahnmook)))
                         .commit();
             }
         }
@@ -61,7 +63,30 @@ public class MainActivity extends AppCompatActivity {
     @Subscribe
     public void onLoginSuccess(AccessToken accessToken) {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.contentContainer, FeedFragment.newInstance())
+                .replace(R.id.contentContainer, FeedFragment.newInstance(getString(R.string.Mahnmook)))
                 .commit();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.mainmenu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.mahnmooksetting)
+        {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.contentContainer, FeedFragment.newInstance(getString(R.string.Mahnmook)))
+                    .commit();
+        }else
+        if(item.getItemId() == R.id.ornsetting)
+        {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.contentContainer, FeedFragment.newInstance(getString(R.string.Orn)))
+                    .commit();
+        }
+        return true;
     }
 }

@@ -39,13 +39,8 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
       //  FeedListItem view = new FeedListItem(parent.getContext());
-        PageProfile pageProfile = PageProfileManager.getInstance().getDao();
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_feed, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
-        viewHolder.profileName.setText(pageProfile.getName());
-        Glide.with(viewHolder.profilePicture.getContext())
-                .load(pageProfile.getPicture().getData().getUrl())
-                .into(viewHolder.profilePicture);
         return viewHolder;
     }
 
@@ -57,8 +52,13 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        PageProfile pageProfile = PageProfileManager.getInstance().getDao();
         Datum dao = FeedListManager.getInstance().getDao().getFeed().get(position);
         ViewHolder viewHolder = (ViewHolder) holder;
+        viewHolder.profileName.setText(pageProfile.getName());
+        Glide.with(viewHolder.profilePicture.getContext())
+                .load(pageProfile.getPicture().getData().getUrl())
+                .into(viewHolder.profilePicture);
         viewHolder.description.setText(dao.getMessage());
         viewHolder.timestamp.setText(getTimeAgoFromUTCString(dao.getCreatedTime()));
         viewHolder.image.setVisibility(View.VISIBLE);
