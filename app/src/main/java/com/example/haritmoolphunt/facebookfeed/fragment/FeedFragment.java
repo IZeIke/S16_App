@@ -1,8 +1,13 @@
 package com.example.haritmoolphunt.facebookfeed.fragment;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,6 +42,7 @@ public class FeedFragment extends Fragment {
     String pageID;
     RecyclerView recyclerView;
     FeedListAdapter feedListAdapter;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     public FeedFragment() {
         super();
@@ -54,6 +60,7 @@ public class FeedFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         pageID = getArguments().getString("pageID");
+
         init(savedInstanceState);
 
         if (savedInstanceState != null)
@@ -71,7 +78,53 @@ public class FeedFragment extends Fragment {
     @SuppressWarnings("UnusedParameters")
     private void init(Bundle savedInstanceState) {
         // Init Fragment level's variable(s) here
+    }
 
+    @SuppressWarnings("UnusedParameters")
+    private void initInstances(View rootView, Bundle savedInstanceState) {
+        // Init 'View' instance(s) with rootView.findViewById here
+        // Note: State of variable initialized here could not be saved
+        //       in onSavedInstanceState]
+        recyclerView = rootView.findViewById(R.id.recyclerview);
+        feedListAdapter = new FeedListAdapter();
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity()
+                , LinearLayoutManager.VERTICAL
+                , false);
+        recyclerView.setLayoutManager(llm);
+        //recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
+        recyclerView.setNestedScrollingEnabled(true);
+        recyclerView.setHasFixedSize(false);
+        recyclerView.setAdapter(feedListAdapter);
+        swipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if(internet_connection())
+                    loadData();
+                else
+                    Snackbar.make(getView(),"No internet connection.",Snackbar.LENGTH_LONG).show();
+                    swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+        if(internet_connection())
+            loadData();
+        else
+            Toast.makeText(getContext(),"No internet connection",Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Save Instance (Fragment level's variables) State here
+    }
+
+    @SuppressWarnings("UnusedParameters")
+    private void onRestoreInstanceState(Bundle savedInstanceState) {
+        // Restore Instance (Fragment level's variables) State here
+    }
+
+    private void loadData() {
         GraphRequest request = GraphRequest.newGraphPathRequest(
                 AccessToken.getCurrentAccessToken(),
                 "/"+pageID+"/posts",
@@ -90,7 +143,7 @@ public class FeedFragment extends Fragment {
         parameters.putString("fields", "id,created_time,message,attachments{media{image{src}},title,type,url,subattachments{media{image{src}}}}");
         parameters.putString("limit", "25");
         request.setParameters(parameters);
-       // request.executeAsync();
+        // request.executeAsync();
 
         GraphRequest request2 = GraphRequest.newGraphPathRequest(
                 AccessToken.getCurrentAccessToken(),
@@ -107,7 +160,7 @@ public class FeedFragment extends Fragment {
         Bundle parameters2 = new Bundle();
         parameters2.putString("fields", "name,picture");
         request2.setParameters(parameters2);
-       // request2.executeAsync();
+        // request2.executeAsync();
 
 
         GraphRequestBatch batch = new GraphRequestBatch(request2,request);
@@ -115,39 +168,23 @@ public class FeedFragment extends Fragment {
             @Override
             public void onBatchCompleted(GraphRequestBatch graphRequests) {
                 // Application code for when the batch finishes
+                swipeRefreshLayout.setRefreshing(false);
                 feedListAdapter.notifyDataSetChanged();
             }
         });
         batch.executeAsync();
-
     }
 
-    @SuppressWarnings("UnusedParameters")
-    private void initInstances(View rootView, Bundle savedInstanceState) {
-        // Init 'View' instance(s) with rootView.findViewById here
-        // Note: State of variable initialized here could not be saved
-        //       in onSavedInstanceState]
-        recyclerView = rootView.findViewById(R.id.recyclerview);
-        feedListAdapter = new FeedListAdapter();
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity()
-                , LinearLayoutManager.VERTICAL
-                , false);
-        recyclerView.setLayoutManager(llm);
-        //recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
-        recyclerView.setNestedScrollingEnabled(true);
-        recyclerView.setHasFixedSize(false);
-        recyclerView.setAdapter(feedListAdapter);
-    }
+    boolean internet_connection(){
+        //Check if connected to internet, output accordingly
+        ConnectivityManager cm =
+                (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        // Save Instance (Fragment level's variables) State here
-    }
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
 
-    @SuppressWarnings("UnusedParameters")
-    private void onRestoreInstanceState(Bundle savedInstanceState) {
-        // Restore Instance (Fragment level's variables) State here
+        return isConnected;
     }
 
 }

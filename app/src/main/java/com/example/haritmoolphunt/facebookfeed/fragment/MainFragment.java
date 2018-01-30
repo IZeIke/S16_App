@@ -3,7 +3,10 @@ package com.example.haritmoolphunt.facebookfeed.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -89,6 +92,7 @@ public class MainFragment extends Fragment {
         // Init 'View' instance(s) with rootView.findViewById here
         // Note: State of variable initialized here could not be saved
         //       in onSavedInstanceState
+
         loginButton = rootView.findViewById(R.id.login_button);
         loginButton.setReadPermissions("email");
         // If using in a fragment
@@ -131,6 +135,8 @@ public class MainFragment extends Fragment {
             @Override
             public void onError(FacebookException exception) {
                 // App code
+               // Toast.makeText(getContext(),"error",Toast.LENGTH_LONG).show();
+                Snackbar.make(getView(),"No internet connection.",Snackbar.LENGTH_LONG).show();
             }
         });
     }
