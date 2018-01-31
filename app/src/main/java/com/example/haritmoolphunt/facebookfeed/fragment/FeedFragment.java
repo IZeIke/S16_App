@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.Toast;
 import com.example.haritmoolphunt.facebookfeed.R;
 import com.example.haritmoolphunt.facebookfeed.adapter.FeedListAdapter;
@@ -43,6 +45,7 @@ public class FeedFragment extends Fragment {
     RecyclerView recyclerView;
     FeedListAdapter feedListAdapter;
     SwipeRefreshLayout swipeRefreshLayout;
+    boolean isLoadingMore = false;
 
     public FeedFragment() {
         super();
@@ -87,7 +90,7 @@ public class FeedFragment extends Fragment {
         //       in onSavedInstanceState]
         recyclerView = rootView.findViewById(R.id.recyclerview);
         feedListAdapter = new FeedListAdapter();
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity()
+        final LinearLayoutManager llm = new LinearLayoutManager(getActivity()
                 , LinearLayoutManager.VERTICAL
                 , false);
         recyclerView.setLayoutManager(llm);
@@ -95,6 +98,25 @@ public class FeedFragment extends Fragment {
         recyclerView.setNestedScrollingEnabled(true);
         recyclerView.setHasFixedSize(false);
         recyclerView.setAdapter(feedListAdapter);
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
+            int firstVisiblesItems, visibleItemCount, totalItemCount;
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                visibleItemCount = llm.getChildCount();
+                totalItemCount = llm.getItemCount();
+                firstVisiblesItems = llm.findFirstVisibleItemPosition();
+                if(firstVisiblesItems + visibleItemCount >= totalItemCount){
+                    if(feedListAdapter.getItemCount() > 0){
+                        loadMoreData();
+                    }
+                }else{
+                    isLoadingMore = false;
+                }
+            }
+        });
+
         swipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -125,6 +147,75 @@ public class FeedFragment extends Fragment {
     }
 
     private void loadData() {
+        GraphRequest request1 = getFeedGraphRequest();
+        // request.executeAsync();
+
+        GraphRequest request2 = getPageProfileGraphRequest();
+        // request2.executeAsync();
+
+
+        GraphRequestBatch batch = new GraphRequestBatch(request2,request1);
+        batch.addCallback(new GraphRequestBatch.Callback() {
+            @Override
+            public void onBatchCompleted(GraphRequestBatch graphRequests) {
+                // Application code for when the batch finishes
+                swipeRefreshLayout.setRefreshing(false);
+                feedListAdapter.notifyDataSetChanged();
+            }
+        });
+        batch.executeAsync();
+    }
+
+    private void loadMoreData(){
+        //GraphRequest request1 = getPageProfileGraphRequest();
+        if(isLoadingMore){
+            return;
+        }
+        if(FeedListManager.getInstance().getDao().getMoreFeed().getNext() == "end"){
+            Snackbar.make(getView(),"End Feed",Snackbar.LENGTH_LONG).show();
+            return;
+        }
+        isLoadingMore = true;
+        String nextUrl = FeedListManager.getInstance().getDao().getMoreFeed().getNext();
+        GraphRequest request = GraphRequest.newGraphPathRequest(
+                AccessToken.getCurrentAccessToken(),
+                nextUrl.substring(nextUrl.indexOf("/"+pageID)),
+                new GraphRequest.Callback() {
+                    @Override
+                    public void onCompleted(GraphResponse response) {
+                        // Insert your code here
+                        Gson gson = new Gson();
+                        Posts posts = gson.fromJson(response.getJSONObject().toString(), Posts.class);
+                        FeedListManager.getInstance().addDaoAtButtomPosition(posts);
+                        feedListAdapter.notifyDataSetChanged();
+                    }
+                });
+
+        request.executeAsync();
+    }
+
+    @NonNull
+    private GraphRequest getPageProfileGraphRequest() {
+        GraphRequest request2 = GraphRequest.newGraphPathRequest(
+                AccessToken.getCurrentAccessToken(),
+                "/"+pageID,
+                new GraphRequest.Callback() {
+                    @Override
+                    public void onCompleted(GraphResponse response) {
+                        Gson gson = new Gson();
+                        PageProfile pageProfile = gson.fromJson(response.getJSONObject().toString(),PageProfile.class);
+                        PageProfileManager.getInstance().setDao(pageProfile);
+                    }
+                });
+
+        Bundle parameters2 = new Bundle();
+        parameters2.putString("fields", "name,picture");
+        request2.setParameters(parameters2);
+        return request2;
+    }
+
+    @NonNull
+    private GraphRequest getFeedGraphRequest() {
         GraphRequest request = GraphRequest.newGraphPathRequest(
                 AccessToken.getCurrentAccessToken(),
                 "/"+pageID+"/posts",
@@ -143,36 +234,7 @@ public class FeedFragment extends Fragment {
         parameters.putString("fields", "id,created_time,message,attachments{media{image{src}},title,type,url,subattachments{media{image{src}}}}");
         parameters.putString("limit", "25");
         request.setParameters(parameters);
-        // request.executeAsync();
-
-        GraphRequest request2 = GraphRequest.newGraphPathRequest(
-                AccessToken.getCurrentAccessToken(),
-                "/"+pageID,
-                new GraphRequest.Callback() {
-                    @Override
-                    public void onCompleted(GraphResponse response) {
-                        Gson gson = new Gson();
-                        PageProfile pageProfile = gson.fromJson(response.getJSONObject().toString(),PageProfile.class);
-                        PageProfileManager.getInstance().setDao(pageProfile);
-                    }
-                });
-
-        Bundle parameters2 = new Bundle();
-        parameters2.putString("fields", "name,picture");
-        request2.setParameters(parameters2);
-        // request2.executeAsync();
-
-
-        GraphRequestBatch batch = new GraphRequestBatch(request2,request);
-        batch.addCallback(new GraphRequestBatch.Callback() {
-            @Override
-            public void onBatchCompleted(GraphRequestBatch graphRequests) {
-                // Application code for when the batch finishes
-                swipeRefreshLayout.setRefreshing(false);
-                feedListAdapter.notifyDataSetChanged();
-            }
-        });
-        batch.executeAsync();
+        return request;
     }
 
     boolean internet_connection(){
