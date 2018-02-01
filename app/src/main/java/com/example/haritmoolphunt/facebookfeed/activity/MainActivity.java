@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import com.example.haritmoolphunt.facebookfeed.R;
 import com.example.haritmoolphunt.facebookfeed.fragment.FeedFragment;
 import com.example.haritmoolphunt.facebookfeed.fragment.MainFragment;
+import com.example.haritmoolphunt.facebookfeed.fragment.ViewPagerMainFragment;
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
@@ -44,7 +45,8 @@ public class MainActivity extends AppCompatActivity {
 
                 appBarLayout.setExpanded(true, true);
                 getSupportFragmentManager().beginTransaction()
-                        .add(R.id.contentContainer, FeedFragment.newInstance(getString(R.string.Mahnmook)))
+                //        .add(R.id.contentContainer, FeedFragment.newInstance(getString(R.string.Mahnmook)))
+                        .add(R.id.contentContainer, ViewPagerMainFragment.newInstance(getString(R.string.Mahnmook)))
                         .commit();
             }
         }
@@ -72,7 +74,8 @@ public class MainActivity extends AppCompatActivity {
     @Subscribe
     public void onLoginSuccess(AccessToken accessToken) {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.contentContainer, FeedFragment.newInstance(getString(R.string.Mahnmook)))
+                //.replace(R.id.contentContainer, FeedFragment.newInstance(getString(R.string.Mahnmook)))
+                .replace(R.id.contentContainer, ViewPagerMainFragment.newInstance(getString(R.string.Mahnmook)))
                 .commit();
     }
 
@@ -87,13 +90,13 @@ public class MainActivity extends AppCompatActivity {
         if(item.getItemId() == R.id.mahnmooksetting)
         {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.contentContainer, FeedFragment.newInstance(getString(R.string.Mahnmook)))
+                    .replace(R.id.contentContainer, ViewPagerMainFragment.newInstance(getString(R.string.Mahnmook)))
                     .commit();
         }else
         if(item.getItemId() == R.id.ornsetting)
         {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.contentContainer, FeedFragment.newInstance(getString(R.string.Orn)))
+                    .replace(R.id.contentContainer, ViewPagerMainFragment.newInstance(getString(R.string.Orn)))
                     .commit();
         }else
         if(item.getItemId() == R.id.logoutsetting)

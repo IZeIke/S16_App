@@ -14,6 +14,10 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.haritmoolphunt.facebookfeed.R;
+import com.example.haritmoolphunt.facebookfeed.dao.PageProfile;
+import com.example.haritmoolphunt.facebookfeed.dao.UserProfile;
+import com.example.haritmoolphunt.facebookfeed.manager.UserProfileManager;
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -22,8 +26,10 @@ import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
+import org.json.JSONObject;
 
 
 /**
@@ -103,28 +109,9 @@ public class MainFragment extends Fragment {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // App code
-                Toast.makeText(getContext(),loginResult.getAccessToken().getUserId(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(),"Log In Success",Toast.LENGTH_SHORT).show();
 
                 EventBus.getDefault().post(loginResult.getAccessToken());
-
-              /*  GraphRequest otherRequest = GraphRequest.newGraphPathRequest(loginResult.getAccessToken(),
-                        "?ids=737460709751015&fields=name,picture{url},posts{id,created_time,message,attachments{media{image{src}},title,type,url,subattachments{media{image{src}}}}}",
-                        new GraphRequest.Callback() {
-                            @Override
-                            public void onCompleted(GraphResponse response) {
-                                Log.d("Json",response.getJSONObject().toString());
-
-                            }
-                        });
-
-
-                Bundle parameters = new Bundle();
-                parameters.putString("fields", "name,id,");
-                otherRequest.setParameters(parameters);
-                otherRequest.executeAsync();
-                */
-
-
             }
 
             @Override

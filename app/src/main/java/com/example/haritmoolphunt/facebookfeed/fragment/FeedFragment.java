@@ -23,8 +23,10 @@ import com.example.haritmoolphunt.facebookfeed.R;
 import com.example.haritmoolphunt.facebookfeed.adapter.FeedListAdapter;
 import com.example.haritmoolphunt.facebookfeed.dao.PageProfile;
 import com.example.haritmoolphunt.facebookfeed.dao.Posts;
+import com.example.haritmoolphunt.facebookfeed.dao.UserProfile;
 import com.example.haritmoolphunt.facebookfeed.manager.FeedListManager;
 import com.example.haritmoolphunt.facebookfeed.manager.PageProfileManager;
+import com.example.haritmoolphunt.facebookfeed.manager.UserProfileManager;
 import com.example.haritmoolphunt.facebookfeed.template.FragmentTemplateFull;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
@@ -153,7 +155,6 @@ public class FeedFragment extends Fragment {
         GraphRequest request2 = getPageProfileGraphRequest();
         // request2.executeAsync();
 
-
         GraphRequestBatch batch = new GraphRequestBatch(request2,request1);
         batch.addCallback(new GraphRequestBatch.Callback() {
             @Override
@@ -209,7 +210,7 @@ public class FeedFragment extends Fragment {
                 });
 
         Bundle parameters2 = new Bundle();
-        parameters2.putString("fields", "name,picture");
+        parameters2.putString("fields", "name,picture.width(800).height(800)");
         request2.setParameters(parameters2);
         return request2;
     }
