@@ -3,18 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/mahnmooksetting"
-        android:title="Mahnmook❤"
-        app:showAsAction="never"
-        ></item>
-
-    <item
-        android:id="@+id/ornsetting"
-        android:title="Orn"
-        app:showAsAction="never"
-        ></item>
-
-    <item
         android:id="@+id/logoutsetting"
         android:title="Log Out"
         app:showAsAction="never"

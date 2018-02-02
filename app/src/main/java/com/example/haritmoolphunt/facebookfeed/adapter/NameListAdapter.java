@@ -1,10 +1,13 @@
 package com.example.haritmoolphunt.facebookfeed.adapter;
 
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.haritmoolphunt.facebookfeed.R;
 
@@ -15,6 +18,7 @@ import com.example.haritmoolphunt.facebookfeed.R;
 public class NameListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     String[] nameList;
+
     public NameListAdapter(String[] namelist){
         nameList = namelist;
     }
@@ -25,6 +29,7 @@ public class NameListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
     }
+
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
@@ -37,7 +42,8 @@ public class NameListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return nameList.length;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder
+    {
 
         TextView textView;
 

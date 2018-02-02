@@ -3,12 +3,14 @@ package com.example.haritmoolphunt.facebookfeed.adapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -72,9 +74,17 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         .load(dao.getAttachments().getData().get(0).getMedia().getImage().getSrc())
                         .into(viewHolder.image);
 
+               // Log.d("videocheck",dao.getAttachments().getData().get(0).getType());
+               // Log.d("videocheck",dao.getAttachments().getData().get(0).getUrl());
+                if(dao.getAttachments().getData().get(0).getType() == "video_inline")
+                {
+
+                }
+
             }else{
                 viewHolder.image.setVisibility(View.GONE);
             }
+
         }else{
             viewHolder.image.setVisibility(View.GONE);
         }
@@ -98,6 +108,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         TextView timestamp;
         TextView description;
         PhotoView image;
+        VideoView videoView;
 
         public ViewHolder(View view) {
             super(view);
@@ -106,10 +117,11 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             timestamp = view.findViewById(R.id.timestamp);
             description = view.findViewById(R.id.description);
             image = view.findViewById(R.id.feedImage);
+           // videoView = view.findViewById(R.id.videoView);
         }
     }
 
-    public CharSequence getTimeAgoFromUTCString(String utcLongDateTime) {
+    private CharSequence getTimeAgoFromUTCString(String utcLongDateTime) {
         long timeMillis = 0;
         try
         {

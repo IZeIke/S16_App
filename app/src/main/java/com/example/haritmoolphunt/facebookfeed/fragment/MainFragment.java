@@ -111,7 +111,7 @@ public class MainFragment extends Fragment {
                 // App code
                 Toast.makeText(getContext(),"Log In Success",Toast.LENGTH_SHORT).show();
 
-                EventBus.getDefault().post(loginResult.getAccessToken());
+                EventBus.getDefault().post(getString(R.string.Mahnmook));
             }
 
             @Override

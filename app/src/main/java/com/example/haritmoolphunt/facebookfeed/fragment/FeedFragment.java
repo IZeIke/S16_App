@@ -28,6 +28,7 @@ import com.example.haritmoolphunt.facebookfeed.manager.FeedListManager;
 import com.example.haritmoolphunt.facebookfeed.manager.PageProfileManager;
 import com.example.haritmoolphunt.facebookfeed.manager.UserProfileManager;
 import com.example.haritmoolphunt.facebookfeed.template.FragmentTemplateFull;
+import com.example.haritmoolphunt.facebookfeed.view.SimpleDividerItemDecoration;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphRequestBatch;
@@ -100,7 +101,7 @@ public class FeedFragment extends Fragment {
         recyclerView.setNestedScrollingEnabled(true);
         recyclerView.setHasFixedSize(false);
         recyclerView.setAdapter(feedListAdapter);
-
+        //recyclerView.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
             int firstVisiblesItems, visibleItemCount, totalItemCount;
             @Override

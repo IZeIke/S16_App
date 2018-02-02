@@ -2,4 +2,6 @@
     <string name="app_name">FacebookFeed</string>
     <string name="facebook_app_id">165248627572512</string>
     <string name="fb_login_protocol_scheme">fb165248627572512</string>
+    <string name="open_drawer">open</string>
+    <string name="close_drawer">close</string>
 </resources>

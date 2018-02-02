@@ -60,28 +60,33 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/toggle_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sweat16"
-        />
+    <com.example.haritmoolphunt.facebookfeed.view.BandListItem
+        android:id="@+id/sweat16_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
    <android.support.v7.widget.RecyclerView
        android:id="@+id/name_RecyclerView"
        android:layout_width="match_parent"
-       android:layout_height="wrap_content">
+       android:layout_height="wrap_content"
+       android:background="@color/white"
+       >
    </android.support.v7.widget.RecyclerView>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Test"
-        />
+        <com.example.haritmoolphunt.facebookfeed.view.BandListItem
+            android:id="@+id/bnk48_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/bnk48_RecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            >
+        </android.support.v7.widget.RecyclerView>
 
     </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
-
-
 </LinearLayout>

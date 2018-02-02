@@ -25,6 +25,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:26.+'
     compile 'org.greenrobot:eventbus:3.1.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.rohit.recycleritemclicksupport:recycleritemclicksupport:1.0.1'
     implementation 'com.github.bumptech.glide:glide:4.5.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.5.0'
     implementation 'com.github.chrisbanes:PhotoView:2.1.3'

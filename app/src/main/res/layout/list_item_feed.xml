@@ -3,17 +3,19 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="#303030"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginTop="@dimen/feed_item_margin"
         android:paddingTop="@dimen/feed_item_padding_top_bottom"
         android:paddingLeft="@dimen/feed_item_padding_left_right"
         android:paddingRight="@dimen/feed_item_padding_left_right"
-        android:background="#212121"
-        android:textColor="#FFFFFF"
+        android:background="#424242"
+        android:textColor="#000000"
         >
 
         <ImageView
@@ -36,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/feed_item_profile_name"
                 android:text="Mahnmook Sweat16"
-                android:textColor="#FFFFFF"
+                android:textColor="#ffffff"
                 android:textStyle="bold"
                 />
 
@@ -56,8 +58,8 @@
         android:id="@+id/description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#212121"
-        android:textColor="#FFFFFF"
+        android:background="#424242"
+        android:textColor="#ffffff"
         android:paddingBottom="5dp"
         android:paddingLeft="@dimen/feed_item_status_pad_left_right"
         android:paddingRight="@dimen/feed_item_status_pad_left_right"
