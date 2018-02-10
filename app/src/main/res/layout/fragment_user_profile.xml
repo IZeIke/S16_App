@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:descendantFocusability="blocksDescendants"
+    android:clickable="true"
     >
 
     <android.support.v4.widget.NestedScrollView
@@ -13,80 +14,74 @@
         android:scrollbars="none"
         >
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="210dp"
-        >
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/moo"
-            />
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:orientation="horizontal"
-            android:layout_marginLeft="20dp"
-            android:layout_marginBottom="20dp"
-            >
-            <ImageView
-                android:id="@+id/user_profile_picture"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:src="@drawable/profile"
+            android:orientation="vertical">
 
-                />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="210dp">
 
-            <TextView
-                android:id="@+id/user_profile_name"
-                android:layout_width="wrap_content"
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/moo" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/user_profile_picture"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:src="@drawable/profile"
+
+                        />
+
+                    <TextView
+                        android:id="@+id/user_profile_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="30dp"
+                        android:text="Mahnmook"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+            </RelativeLayout>
+
+            <com.example.haritmoolphunt.facebookfeed.view.BandListItem
+                android:id="@+id/sweat16_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/name_RecyclerView"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Mahnmook"
-                android:textStyle="bold"
-                android:textSize="20sp"
-                android:textColor="@color/white"
-                android:layout_marginTop="30dp"
-                android:layout_marginLeft="10dp"
-                />
+                android:background="@color/white"></android.support.v7.widget.RecyclerView>
+
+            <com.example.haritmoolphunt.facebookfeed.view.BandListItem
+                android:id="@+id/bnk48_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/bnk48_RecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"></android.support.v7.widget.RecyclerView>
 
         </LinearLayout>
-    </RelativeLayout>
-
-    <com.example.haritmoolphunt.facebookfeed.view.BandListItem
-        android:id="@+id/sweat16_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-   <android.support.v7.widget.RecyclerView
-       android:id="@+id/name_RecyclerView"
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:background="@color/white"
-       >
-   </android.support.v7.widget.RecyclerView>
-
-        <com.example.haritmoolphunt.facebookfeed.view.BandListItem
-            android:id="@+id/bnk48_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/bnk48_RecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            >
-        </android.support.v7.widget.RecyclerView>
-
-    </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
 </LinearLayout>

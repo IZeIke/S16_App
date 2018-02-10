@@ -20,9 +20,11 @@ android {
 }
 
 dependencies {
+    compile 'com.arasthel:spannedgridlayoutmanager:2.0.1'
     compile 'com.google.code.gson:gson:2.8.2'
     compile 'com.android.support:design:26.+'
     compile 'com.android.support:recyclerview-v7:26.+'
+   // compile 'com.android.support:recyclerview-v7:24.2.1'
     compile 'org.greenrobot:eventbus:3.1.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.rohit.recycleritemclicksupport:recycleritemclicksupport:1.0.1'
