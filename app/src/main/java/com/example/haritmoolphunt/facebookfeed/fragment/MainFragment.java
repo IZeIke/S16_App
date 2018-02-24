@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.example.haritmoolphunt.facebookfeed.R;
 import com.example.haritmoolphunt.facebookfeed.dao.PageProfile;
 import com.example.haritmoolphunt.facebookfeed.dao.UserProfile;
+import com.example.haritmoolphunt.facebookfeed.event.BusEvent;
 import com.example.haritmoolphunt.facebookfeed.manager.UserProfileManager;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -111,7 +112,7 @@ public class MainFragment extends Fragment {
                 // App code
                 Toast.makeText(getContext(),"Log In Success",Toast.LENGTH_SHORT).show();
 
-                EventBus.getDefault().post(getString(R.string.Mahnmook));
+                EventBus.getDefault().post(new BusEvent.LoginEvent());
             }
 
             @Override

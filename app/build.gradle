@@ -20,6 +20,8 @@ android {
 }
 
 dependencies {
+    compile 'com.felipecsl.asymmetricgridview:library:2.0.1'
+    compile 'org.cryse.widget:persistentsearchview:1.0.4@aar'
     compile 'com.arasthel:spannedgridlayoutmanager:2.0.1'
     compile 'com.google.code.gson:gson:2.8.2'
     compile 'com.android.support:design:26.+'

@@ -12,12 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.example.haritmoolphunt.facebookfeed.LayoutManager.Helper.MySpanSizeLookup;
 import com.example.haritmoolphunt.facebookfeed.LayoutManager.SpannedGridLayoutManager;
 import com.example.haritmoolphunt.facebookfeed.R;
 import com.example.haritmoolphunt.facebookfeed.dao.Datum;
@@ -27,12 +29,18 @@ import com.example.haritmoolphunt.facebookfeed.manager.FeedListManager;
 import com.example.haritmoolphunt.facebookfeed.manager.PageProfileManager;
 import com.example.haritmoolphunt.facebookfeed.template.Contextor;
 import com.example.haritmoolphunt.facebookfeed.view.FeedListItem;
+import com.felipecsl.asymmetricgridview.library.Utils;
+import com.felipecsl.asymmetricgridview.library.model.AsymmetricItem;
+import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridView;
+import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridViewAdapter;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 /**
@@ -78,43 +86,13 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         .load(dao.getAttachments().getData().get(0).getMedia().getImage().getSrc())
                         .into(viewHolder.image);
 
-               // Log.d("videocheck",dao.getAttachments().getData().get(0).getType());
-               // Log.d("videocheck",dao.getAttachments().getData().get(0).getUrl());
-                if(dao.getAttachments().getData().get(0).getType() == "video_inline")
-                {
-
-                }
-
             }else{
                 viewHolder.image.setVisibility(View.GONE);
             }
 
             if(dao.getAttachments().getData().get(0).getSubattachments() != null)
             {
-                SpannedGridLayoutManager gridLayoutManager;
                 ImageViewAdapter imageViewAdapter;
-
-                LinearLayoutManager llm1 = new LinearLayoutManager(viewHolder.photoGridRecyclerView.getContext()
-                        , LinearLayoutManager.VERTICAL
-                        , false);
-
-                gridLayoutManager = new SpannedGridLayoutManager(
-                        new SpannedGridLayoutManager.GridSpanLookup() {
-                            @Override
-                            public SpannedGridLayoutManager.SpanInfo getSpanInfo(int position) {
-                                if (position == 0) {
-                                    return new SpannedGridLayoutManager.SpanInfo(2, 2);
-                                } else {
-                                    return new SpannedGridLayoutManager.SpanInfo(1, 1);
-                                }
-                            }
-                        },3,1f
-                );
-
-                com.arasthel.spannedgridlayoutmanager.SpannedGridLayoutManager spannedGridLayoutManager = new com.arasthel.spannedgridlayoutmanager.SpannedGridLayoutManager(
-                        com.arasthel.spannedgridlayoutmanager.SpannedGridLayoutManager.Orientation.VERTICAL,4);
-
-
                 SpannedGridLayoutManager manager = new SpannedGridLayoutManager(
                         new SpannedGridLayoutManager.GridSpanLookup() {
                             @Override
@@ -130,12 +108,33 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         3, // number of columns
                         1f // how big is default item
                 );
+                GridLayoutManager layoutManager = new GridLayoutManager(viewHolder.photoGridRecyclerView.getContext(), 2,LinearLayoutManager.VERTICAL,
+                        false);
 
-                viewHolder.photoGridRecyclerView.setLayoutManager(new GridLayoutManager(viewHolder.photoGridRecyclerView.getContext(),2));
+                if(dao.getAttachments().getData().get(0).getSubattachments().getData().size()%2 != 0) {
 
+                    layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                        @Override
+                        public int getSpanSize(int position) {
+                            if (position == 0)
+                                return 2;
+                            else
+                                return 1;
+                        }
+                    });
+                }else{
+                    layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                        @Override
+                        public int getSpanSize(int position) {
+                            return 1;
+                        }
+                    });
+                }
+                viewHolder.photoGridRecyclerView.setLayoutManager(layoutManager);
                 imageViewAdapter = new ImageViewAdapter(dao.getAttachments().getData().get(0).getSubattachments().getData());
                 viewHolder.photoGridRecyclerView.setAdapter(imageViewAdapter);
                 imageViewAdapter.notifyDataSetChanged();
+
                 /*
                 if(dao.getAttachments().getData().get(0).getSubattachments().getData().size() == 2)
                 {
@@ -193,6 +192,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         VideoView videoView;
         RecyclerView photoGridRecyclerView;
 
+
         public ViewHolder(View view) {
             super(view);
             profilePicture = view.findViewById(R.id.profile_picture);
@@ -201,6 +201,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             description = view.findViewById(R.id.description);
             image = view.findViewById(R.id.feedImage);
             photoGridRecyclerView = view.findViewById(R.id.photoGridRecyclerView);
+
            // videoView = view.findViewById(R.id.videoView);
         }
     }

@@ -17,13 +17,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.Toast;
+
+import com.example.haritmoolphunt.facebookfeed.Listener.HidingScrollListener;
 import com.example.haritmoolphunt.facebookfeed.R;
 import com.example.haritmoolphunt.facebookfeed.adapter.FeedListAdapter;
 import com.example.haritmoolphunt.facebookfeed.dao.PageProfile;
 import com.example.haritmoolphunt.facebookfeed.dao.Posts;
 import com.example.haritmoolphunt.facebookfeed.dao.UserProfile;
+import com.example.haritmoolphunt.facebookfeed.event.BusEvent;
 import com.example.haritmoolphunt.facebookfeed.manager.FeedListManager;
 import com.example.haritmoolphunt.facebookfeed.manager.PageProfileManager;
 import com.example.haritmoolphunt.facebookfeed.manager.UserProfileManager;
@@ -36,6 +40,7 @@ import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.google.gson.Gson;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONObject;
 
 /**
@@ -119,6 +124,19 @@ public class FeedFragment extends Fragment {
                 }
             }
         });
+
+        /*recyclerView.addOnScrollListener(new HidingScrollListener() {
+            @Override
+            public void onHide() {
+                EventBus.getDefault().post(new BusEvent.HideEvent());
+                //hideViews();
+            }
+            @Override
+            public void onShow() {
+                //showViews();
+                EventBus.getDefault().post(new BusEvent.ShowEvent());
+            }
+        }); */
 
         swipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
