@@ -1,6 +1,7 @@
 package com.example.haritmoolphunt.facebookfeed.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
@@ -22,9 +24,12 @@ import com.bumptech.glide.request.target.Target;
 import com.example.haritmoolphunt.facebookfeed.LayoutManager.Helper.MySpanSizeLookup;
 import com.example.haritmoolphunt.facebookfeed.LayoutManager.SpannedGridLayoutManager;
 import com.example.haritmoolphunt.facebookfeed.R;
+import com.example.haritmoolphunt.facebookfeed.activity.PhotoActivity;
 import com.example.haritmoolphunt.facebookfeed.dao.Datum;
+import com.example.haritmoolphunt.facebookfeed.dao.Image;
 import com.example.haritmoolphunt.facebookfeed.dao.PageProfile;
 import com.example.haritmoolphunt.facebookfeed.dao.Posts;
+import com.example.haritmoolphunt.facebookfeed.event.BusEvent;
 import com.example.haritmoolphunt.facebookfeed.manager.FeedListManager;
 import com.example.haritmoolphunt.facebookfeed.manager.PageProfileManager;
 import com.example.haritmoolphunt.facebookfeed.template.Contextor;
@@ -34,7 +39,10 @@ import com.felipecsl.asymmetricgridview.library.model.AsymmetricItem;
 import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridView;
 import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridViewAdapter;
 import com.github.chrisbanes.photoview.PhotoView;
+import com.pchmn.materialchips.ChipView;
 import com.squareup.picasso.Picasso;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -48,127 +56,135 @@ import java.util.TimeZone;
  */
 
 public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
+    private int FIRST_ITEM = 0;
+    private int FEED_TEXT_ITEM = 1;
+    private int FEED_PICTURE_ITEM = 2;
+    private int FEED_VIDEO_ITEM = 3;
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
       //  FeedListItem view = new FeedListItem(parent.getContext());
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_feed, parent, false);
-        ViewHolder viewHolder = new ViewHolder(view);
-        return viewHolder;
+        //View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_feed, parent, false);
+        if(viewType == FIRST_ITEM){
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.decorator_item, parent, false);
+            ViewHolder0 viewHolder = new ViewHolder0(view);
+            return viewHolder;
+        }else
+        if(viewType == FEED_TEXT_ITEM)
+        {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_item_feed, parent, false);
+            ViewHolder1 viewHolder = new ViewHolder1(view);
+            return viewHolder;
+        }else{
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_item_feed_picture, parent, false);
+            ViewHolder viewHolder = new ViewHolder(view);
+            return viewHolder;
+        }
     }
 
 
     @Override
     public int getItemViewType(int position) {
-        return super.getItemViewType(position);
+
+        if(position == 0){
+            return FIRST_ITEM;
+        }else
+        if(FeedListManager.getInstance().getDao().getFeed().get(--position).getAttachments() == null){
+            return FEED_TEXT_ITEM;
+        }else
+        if(FeedListManager.getInstance().getDao().getFeed().get(--position).getAttachments().getData().get(0).getType() != "video_inline"){
+            return FEED_PICTURE_ITEM;
+        }else{
+            return FEED_VIDEO_ITEM;
+        }
+
+        //return super.getItemViewType(position);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        PageProfile pageProfile = PageProfileManager.getInstance().getDao();
-        Datum dao = FeedListManager.getInstance().getDao().getFeed().get(position);
-        ViewHolder viewHolder = (ViewHolder) holder;
-        viewHolder.profileName.setText(pageProfile.getName());
-        Glide.with(viewHolder.profilePicture.getContext())
-                .load(pageProfile.getPicture().getData().getUrl())
-                .into(viewHolder.profilePicture);
-        viewHolder.description.setText(dao.getMessage());
-        viewHolder.timestamp.setText(getTimeAgoFromUTCString(dao.getCreatedTime()));
-        viewHolder.image.setVisibility(View.VISIBLE);
-        viewHolder.photoGridRecyclerView.setVisibility(View.VISIBLE);
-        if(dao.getAttachments() != null){
-            if(dao.getAttachments().getData().get(0).getMedia() != null) {
+        if(getItemViewType(position) == FEED_TEXT_ITEM) {
+            position--;
+            PageProfile pageProfile = PageProfileManager.getInstance().getDao();
+            Datum dao = FeedListManager.getInstance().getDao().getFeed().get(position);
+            ViewHolder1 viewHolder = (ViewHolder1) holder;
+            viewHolder.profileName.setText(pageProfile.getName());
 
-                RequestOptions requestOptions = new RequestOptions().fitCenter();
+            Glide.with(viewHolder.profilePicture.getContext())
+                    .load(pageProfile.getPicture().getData().getUrl())
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(viewHolder.profilePicture);
 
-                Glide.with(viewHolder.image.getContext()).setDefaultRequestOptions(requestOptions)
-                        .load(dao.getAttachments().getData().get(0).getMedia().getImage().getSrc())
-                        .into(viewHolder.image);
+            viewHolder.description.setText(dao.getMessage());
+            viewHolder.timestamp.setText(getTimeAgoFromUTCString(dao.getCreatedTime()));
 
-            }else{
-                viewHolder.image.setVisibility(View.GONE);
-            }
+        }else
+        if(getItemViewType(position) == FEED_PICTURE_ITEM){
+            position--;
+            PageProfile pageProfile = PageProfileManager.getInstance().getDao();
+            final Datum dao = FeedListManager.getInstance().getDao().getFeed().get(position);
+            ViewHolder viewHolder = (ViewHolder) holder;
+            viewHolder.profileName.setText(pageProfile.getName());
 
-            if(dao.getAttachments().getData().get(0).getSubattachments() != null)
-            {
-                ImageViewAdapter imageViewAdapter;
-                SpannedGridLayoutManager manager = new SpannedGridLayoutManager(
-                        new SpannedGridLayoutManager.GridSpanLookup() {
-                            @Override
-                            public SpannedGridLayoutManager.SpanInfo getSpanInfo(int position) {
-                                // Conditions for 2x2 items
-                                if (position % 6 == 0 || position % 6 == 4) {
-                                    return new SpannedGridLayoutManager.SpanInfo(2, 2);
-                                } else {
-                                    return new SpannedGridLayoutManager.SpanInfo(1, 1);
-                                }
-                            }
-                        },
-                        3, // number of columns
-                        1f // how big is default item
-                );
-                GridLayoutManager layoutManager = new GridLayoutManager(viewHolder.photoGridRecyclerView.getContext(), 2,LinearLayoutManager.VERTICAL,
-                        false);
+            Glide.with(viewHolder.profilePicture.getContext())
+                    .load(pageProfile.getPicture().getData().getUrl())
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(viewHolder.profilePicture);
 
-                if(dao.getAttachments().getData().get(0).getSubattachments().getData().size()%2 != 0) {
+            viewHolder.description.setText(dao.getMessage()+" type:"+dao.getAttachments().getData().get(0).getType());
+            viewHolder.timestamp.setText(getTimeAgoFromUTCString(dao.getCreatedTime()));
+            //viewHolder.image.setVisibility(View.VISIBLE);
+            //viewHolder.photoGridRecyclerView.setVisibility(View.VISIBLE);
+            if (dao.getAttachments() != null) {
 
-                    layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                if (dao.getAttachments().getData().get(0).getMedia() != null) {
+                    viewHolder.chip.setVisibility(View.GONE);
+                    RequestOptions requestOptions = new RequestOptions().fitCenter();
+                    requestOptions.placeholder(R.drawable.placeholder);
+
+                    Glide.with(viewHolder.image.getContext()).setDefaultRequestOptions(requestOptions)
+                            .load(dao.getAttachments().getData().get(0).getMedia().getImage().getSrc())
+                            .into(viewHolder.image);
+
+                    final String[] urlList = {dao.getAttachments().getData().get(0).getMedia().getImage().getSrc()};
+
+                    viewHolder.image.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public int getSpanSize(int position) {
-                            if (position == 0)
-                                return 2;
-                            else
-                                return 1;
+                        public void onClick(View view) {
+                            EventBus.getDefault().post(new BusEvent.PhotoActivityEvent(urlList));
                         }
                     });
-                }else{
-                    layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+
+                }else
+                if(dao.getAttachments().getData().get(0).getSubattachments() != null){
+                    viewHolder.chip.setVisibility(View.VISIBLE);
+                    viewHolder.chip.setLabel("1/"+dao.getAttachments().getData().get(0).getSubattachments().getData().size());
+                    RequestOptions requestOptions = new RequestOptions().fitCenter();
+                    requestOptions.placeholder(R.drawable.placeholder);
+                    Glide.with(viewHolder.image.getContext()).setDefaultRequestOptions(requestOptions)
+                            .load(dao.getAttachments().getData().get(0).getSubattachments().getData().get(0).getMedia().getImage().getSrc())
+                            .into(viewHolder.image);
+
+                    final String[] urlList = new String[dao.getAttachments().getData().get(0).getSubattachments().getData().size()];
+                    for(int i =0;i<dao.getAttachments().getData().get(0).getSubattachments().getData().size();i++)
+                    {
+                        urlList[i] = dao.getAttachments().getData().get(0).getSubattachments().getData().get(i).getMedia().getImage().getSrc();
+                    }
+
+                    viewHolder.image.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public int getSpanSize(int position) {
-                            return 1;
+                        public void onClick(View view) {
+                            EventBus.getDefault().post(new BusEvent.PhotoActivityEvent(urlList));
                         }
                     });
                 }
-                viewHolder.photoGridRecyclerView.setLayoutManager(layoutManager);
-                imageViewAdapter = new ImageViewAdapter(dao.getAttachments().getData().get(0).getSubattachments().getData());
-                viewHolder.photoGridRecyclerView.setAdapter(imageViewAdapter);
-                imageViewAdapter.notifyDataSetChanged();
-
-                /*
-                if(dao.getAttachments().getData().get(0).getSubattachments().getData().size() == 2)
-                {
-                    Log.d("check","2column");
-                    gridLayoutManager = new SpannedGridLayoutManager(
-                            new SpannedGridLayoutManager.GridSpanLookup() {
-                                @Override
-                                public SpannedGridLayoutManager.SpanInfo getSpanInfo(int position) {
-                                    return new SpannedGridLayoutManager.SpanInfo(1, 1);
-                                }
-                            },2,1f
-                    );
-                    imageViewAdapter = new ImageViewAdapter(dao.getAttachments().getData().get(0).getSubattachments().getData());
-                    viewHolder.photoGridRecyclerView.setLayoutManager(gridLayoutManager);
-                    viewHolder.photoGridRecyclerView.setAdapter(imageViewAdapter);
-                    imageViewAdapter.notifyDataSetChanged();
-
-                }else
-                if(dao.getAttachments().getData().get(0).getSubattachments().getData().size() == 3)
-                {
-
-                }else{
-
-                } */
-
-
-            }else{
-                viewHolder.photoGridRecyclerView.setVisibility(View.GONE);
             }
 
-        }else{
-            viewHolder.image.setVisibility(View.GONE);
-            viewHolder.photoGridRecyclerView.setVisibility(View.GONE);
+        }else
+        if(getItemViewType(position) == FEED_VIDEO_ITEM){
+
         }
+
 
     }
 
@@ -182,15 +198,41 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return FeedListManager.getInstance().getDao().getFeed().size();
     }
 
+    public class ViewHolder0 extends RecyclerView.ViewHolder {
+        public ViewHolder0(View view) {
+            super(view);
+
+        }
+    }
+
+    public class ViewHolder1 extends RecyclerView.ViewHolder {
+
+        ImageView profilePicture;
+        TextView profileName;
+        TextView timestamp;
+        TextView description;
+        //RecyclerView photoGridRecyclerView;
+
+
+        public ViewHolder1(View view) {
+            super(view);
+            profilePicture = view.findViewById(R.id.profile_picture);
+            profileName = view.findViewById(R.id.profile_name);
+            timestamp = view.findViewById(R.id.timestamp);
+            description = view.findViewById(R.id.description);
+        }
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView profilePicture;
         TextView profileName;
         TextView timestamp;
         TextView description;
-        PhotoView image;
+        ImageView image;
+        ChipView chip;
         VideoView videoView;
-        RecyclerView photoGridRecyclerView;
+        //RecyclerView photoGridRecyclerView;
 
 
         public ViewHolder(View view) {
@@ -200,7 +242,8 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             timestamp = view.findViewById(R.id.timestamp);
             description = view.findViewById(R.id.description);
             image = view.findViewById(R.id.feedImage);
-            photoGridRecyclerView = view.findViewById(R.id.photoGridRecyclerView);
+            chip = view.findViewById(R.id.chip_view);
+            //photoGridRecyclerView = view.findViewById(R.id.photoGridRecyclerView);
 
            // videoView = view.findViewById(R.id.videoView);
         }

@@ -28,12 +28,15 @@ import com.example.haritmoolphunt.facebookfeed.dao.PageProfile;
 import com.example.haritmoolphunt.facebookfeed.dao.Posts;
 import com.example.haritmoolphunt.facebookfeed.dao.UserProfile;
 import com.example.haritmoolphunt.facebookfeed.event.BusEvent;
+import com.example.haritmoolphunt.facebookfeed.manager.AccessTokenManager;
+import com.example.haritmoolphunt.facebookfeed.manager.AppTokenManager;
 import com.example.haritmoolphunt.facebookfeed.manager.FeedListManager;
 import com.example.haritmoolphunt.facebookfeed.manager.PageProfileManager;
 import com.example.haritmoolphunt.facebookfeed.manager.UserProfileManager;
 import com.example.haritmoolphunt.facebookfeed.template.FragmentTemplateFull;
 import com.example.haritmoolphunt.facebookfeed.view.SimpleDividerItemDecoration;
 import com.facebook.AccessToken;
+import com.facebook.AccessTokenSource;
 import com.facebook.GraphRequest;
 import com.facebook.GraphRequestBatch;
 import com.facebook.GraphResponse;
@@ -42,6 +45,10 @@ import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONObject;
+
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Harit Moolphunt on 10/1/2561.
@@ -54,6 +61,7 @@ public class FeedFragment extends Fragment {
     FeedListAdapter feedListAdapter;
     SwipeRefreshLayout swipeRefreshLayout;
     boolean isLoadingMore = false;
+    AccessToken PageAT;
 
     public FeedFragment() {
         super();
@@ -150,9 +158,9 @@ public class FeedFragment extends Fragment {
             }
         });
 
-        if(internet_connection())
+        if(internet_connection()) {
             loadData();
-        else
+        }else
             Toast.makeText(getContext(),"No internet connection",Toast.LENGTH_LONG).show();
     }
 
@@ -173,8 +181,9 @@ public class FeedFragment extends Fragment {
 
         GraphRequest request2 = getPageProfileGraphRequest();
         // request2.executeAsync();
+        GraphRequest request3 = getPageVideoGraphRequest();
 
-        GraphRequestBatch batch = new GraphRequestBatch(request2,request1);
+        GraphRequestBatch batch = new GraphRequestBatch(request3,request2,request1);
         batch.addCallback(new GraphRequestBatch.Callback() {
             @Override
             public void onBatchCompleted(GraphRequestBatch graphRequests) {
@@ -198,7 +207,7 @@ public class FeedFragment extends Fragment {
         isLoadingMore = true;
         String nextUrl = FeedListManager.getInstance().getDao().getMoreFeed().getNext();
         GraphRequest request = GraphRequest.newGraphPathRequest(
-                AccessToken.getCurrentAccessToken(),
+                AppTokenManager.getInstance().getAccessToken(),
                 nextUrl.substring(nextUrl.indexOf("/"+pageID)),
                 new GraphRequest.Callback() {
                     @Override
@@ -217,11 +226,12 @@ public class FeedFragment extends Fragment {
     @NonNull
     private GraphRequest getPageProfileGraphRequest() {
         GraphRequest request2 = GraphRequest.newGraphPathRequest(
-                AccessToken.getCurrentAccessToken(),
+                AppTokenManager.getInstance().getAccessToken(),
                 "/"+pageID,
                 new GraphRequest.Callback() {
                     @Override
                     public void onCompleted(GraphResponse response) {
+                        //Log.d("check",response.getJSONObject().toString());
                         Gson gson = new Gson();
                         PageProfile pageProfile = gson.fromJson(response.getJSONObject().toString(),PageProfile.class);
                         PageProfileManager.getInstance().setDao(pageProfile);
@@ -236,13 +246,17 @@ public class FeedFragment extends Fragment {
 
     @NonNull
     private GraphRequest getFeedGraphRequest() {
+        Set mySet1 = new HashSet();
+        mySet1.add("public_profile");
+        mySet1.add("email");
         GraphRequest request = GraphRequest.newGraphPathRequest(
-                AccessToken.getCurrentAccessToken(),
+                AppTokenManager.getInstance().getAccessToken(),
                 "/"+pageID+"/posts",
                 new GraphRequest.Callback() {
                     @Override
                     public void onCompleted(GraphResponse response) {
                         // Insert your code here
+                        //Log.d("check",response.getJSONObject().toString());
                         Gson gson = new Gson();
                         Posts posts = gson.fromJson(response.getJSONObject().toString(), Posts.class);
                         FeedListManager.getInstance().setDao(posts);
@@ -256,6 +270,28 @@ public class FeedFragment extends Fragment {
         request.setParameters(parameters);
         return request;
     }
+
+    @NonNull
+    private GraphRequest getPageVideoGraphRequest() {
+        GraphRequest request = GraphRequest.newGraphPathRequest(
+                AppTokenManager.getInstance().getAccessToken(),
+                "/"+pageID+"/videos",
+                new GraphRequest.Callback() {
+                    @Override
+                    public void onCompleted(GraphResponse response) {
+                        // Insert your code here
+                        //Log.d("check",response.getJSONObject().toString());
+                        Gson gson = new Gson();
+
+                    }
+                });
+
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "source");
+        request.setParameters(parameters);
+        return request;
+    }
+
 
     boolean internet_connection(){
         //Check if connected to internet, output accordingly

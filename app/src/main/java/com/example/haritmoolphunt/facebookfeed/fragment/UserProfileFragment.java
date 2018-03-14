@@ -48,8 +48,8 @@ public class UserProfileFragment extends Fragment {
     NameListAdapter bnkListAdapter;
     BandListItem sweatButton;
     BandListItem bnkButton;
-    ImageView profilePicture;
-    TextView userName;
+    //ImageView profilePicture;
+    //TextView userName;
     String[] sweat16List = {"Mahnmook","Music","Mint","Ant","Ae","Fame","Pada","Petch","Proud","Pim","Sonja","Anny","Nink"};
     String[] sweat16Id = {"1705672169741865","108567926503749","138188866783330","445003689233126","709046175950703","1913673758896179","260045927831231","108001133246382","120406398606162","799444370230832","111090532897541","809228849236630","333542507094850"};
     String[] bnkList = {"Orn"};
@@ -94,8 +94,8 @@ public class UserProfileFragment extends Fragment {
         // Init 'View' instance(s) with rootView.findViewById here
         // Note: State of variable initialized here could not be saved
         //       in onSavedInstanceState
-        userName = rootView.findViewById(R.id.user_profile_name);
-        profilePicture = rootView.findViewById(R.id.user_profile_picture);
+        //userName = rootView.findViewById(R.id.user_profile_name);
+        //profilePicture = rootView.findViewById(R.id.user_profile_picture);
         sweatButton = rootView.findViewById(R.id.sweat16_button);
         bnkButton = rootView.findViewById(R.id.bnk48_button);
         sweatButton.setName("SWEAT16!");
@@ -103,7 +103,7 @@ public class UserProfileFragment extends Fragment {
         bnkButton.setName("BNK48");
         bnkButton.setPicture(getResources().getDrawable(R.drawable.bnk48logo));
 
-        GraphRequest request = GraphRequest.newMeRequest(
+        /*GraphRequest request = GraphRequest.newMeRequest(
                 AccessToken.getCurrentAccessToken(),
                 new GraphRequest.GraphJSONObjectCallback() {
                     @Override
@@ -124,7 +124,7 @@ public class UserProfileFragment extends Fragment {
         Bundle parameters = new Bundle();
         parameters.putString("fields", "name,picture.width(800).height(800)");
         request.setParameters(parameters);
-        request.executeAsync();
+        request.executeAsync(); */
 
         recyclerView = rootView.findViewById(R.id.name_RecyclerView);
         bnkRecyclerView = rootView.findViewById(R.id.bnk48_RecyclerView);

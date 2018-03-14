@@ -1,5 +1,6 @@
 package com.example.haritmoolphunt.facebookfeed.activity;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -8,12 +9,16 @@ import android.net.NetworkInfo;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,25 +27,45 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 
 import com.example.haritmoolphunt.facebookfeed.R;
+import com.example.haritmoolphunt.facebookfeed.dao.Accesstoken;
 import com.example.haritmoolphunt.facebookfeed.event.BusEvent;
 import com.example.haritmoolphunt.facebookfeed.fragment.FeedFragment;
 import com.example.haritmoolphunt.facebookfeed.fragment.MainFragment;
 import com.example.haritmoolphunt.facebookfeed.fragment.UserProfileFragment;
 import com.example.haritmoolphunt.facebookfeed.fragment.ViewPagerMainFragment;
+import com.example.haritmoolphunt.facebookfeed.manager.AccessTokenManager;
+import com.example.haritmoolphunt.facebookfeed.manager.AppTokenManager;
+import com.example.haritmoolphunt.facebookfeed.manager.FeedListManager;
 import com.example.haritmoolphunt.facebookfeed.manager.SampleSuggestionsBuilder;
+import com.example.haritmoolphunt.facebookfeed.manager.SearchModel;
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 
+import org.cryse.widget.persistentsearch.HomeButton;
 import org.cryse.widget.persistentsearch.PersistentSearchView;
+import org.cryse.widget.persistentsearch.SearchItem;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import ir.mirrajabi.searchdialog.SimpleSearchDialogCompat;
+import ir.mirrajabi.searchdialog.SimpleSearchFilter;
+import ir.mirrajabi.searchdialog.core.BaseSearchDialogCompat;
+import ir.mirrajabi.searchdialog.core.SearchResultListener;
+import ir.mirrajabi.searchdialog.core.Searchable;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private PersistentSearchView mSearchView;
     private View mSearchTintView;
+    TabLayout tabLayout;
     RecyclerView recentBar;
     AppBarLayout appBarLayout;
     DrawerLayout drawerLayout;
@@ -55,22 +80,12 @@ public class MainActivity extends AppCompatActivity {
 
         if(savedInstanceState == null)
         {
-            if(AccessToken.getCurrentAccessToken() == null) {
-
-                getSupportFragmentManager().beginTransaction()
-                        .add(R.id.contentContainer, MainFragment.newInstance())
-                        .commit();
-            }else{
-
-                appBarLayout.setExpanded(true, true);
-                getSupportFragmentManager().beginTransaction()
-                        .add(R.id.menuContainer, UserProfileFragment.newInstance())
-                        .commit();
-                getSupportFragmentManager().beginTransaction()
-                //        .add(R.id.contentContainer, FeedFragment.newInstance(getString(R.string.Mahnmook)))
-                        .add(R.id.contentContainer, ViewPagerMainFragment.newInstance(getString(R.string.Mahnmook)))
-                        .commit();
-            }
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.menuContainer, UserProfileFragment.newInstance())
+                    .commit();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.contentContainer, ViewPagerMainFragment.newInstance(getString(R.string.Mahnmook)))
+                    .commit();
         }
     }
 
@@ -81,7 +96,11 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawerLayout);
         mSearchTintView = findViewById(R.id.view_search_tint);
         appBarLayout = findViewById(R.id.appBarLayout);
-        appBarLayout.setExpanded(false, true);
+        //appBarLayout.setVisibility(View.VISIBLE);
+        //appBarLayout.setExpanded(false, true);
+        //tabLayout = findViewById(R.id.tabLayout);
+       // tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
+       // tabLayout.addTab(tabLayout.newTab().setText("Tab 2"));
         actionBarDrawerToggle = new ActionBarDrawerToggle(
                 MainActivity.this ,
                 drawerLayout,
@@ -92,6 +111,26 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+
+        mSearchView.setHomeButtonListener(new PersistentSearchView.HomeButtonListener() {
+
+            @Override
+            public void onHomeButtonClick() {
+                //Hamburger has been clicked
+                drawerLayout.openDrawer(Gravity.LEFT);
+
+            }
+
+        });
+
+        mSearchTintView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSearchView.cancelEditing();
+            }
+        });
+
+        mSearchView.setSuggestionBuilder(new SampleSuggestionsBuilder(this));
         mSearchView.setSearchListener(new PersistentSearchView.SearchListener() {
             @Override
             public void onSearchCleared() {
@@ -105,6 +144,20 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onSearch(String query) {
+                String [] nameList = FeedListManager.getInstance().getNameList();
+                String [] nameId = FeedListManager.getInstance().getNameId();
+                Log.d("check",query);
+                for(int i=0;i < nameList.length;i++) {
+                    if(query.startsWith(nameList[i])){
+                        onChangePage(nameId[i]);
+                    }else
+                    if(nameList[i].startsWith(query.substring(0,1).toUpperCase()+query.substring(1))) {
+                        onChangePage(nameId[i]);
+                    }
+                }
+
+                mSearchView.setSearchString("",false);
+                //onBackPressed();
 
             }
 
@@ -128,25 +181,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-        mSearchView.setHomeButtonListener(new PersistentSearchView.HomeButtonListener() {
-
-            @Override
-            public void onHomeButtonClick() {
-                //Hamburger has been clicked
-                drawerLayout.openDrawer(Gravity.LEFT);
-            }
-
-        });
-
-        mSearchTintView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mSearchView.cancelEditing();
-            }
-        });
-
-        //mSearchView.setSuggestionBuilder(new SampleSuggestionsBuilder(this));
     }
 
     @Override
@@ -179,7 +213,6 @@ public class MainActivity extends AppCompatActivity {
                 .add(R.id.menuContainer, UserProfileFragment.newInstance())
                 .commit();
         getSupportFragmentManager().beginTransaction()
-                //        .add(R.id.contentContainer, FeedFragment.newInstance(getString(R.string.Mahnmook)))
                 .add(R.id.contentContainer, ViewPagerMainFragment.newInstance(getString(R.string.Mahnmook)))
                 .commit();
 
@@ -189,8 +222,6 @@ public class MainActivity extends AppCompatActivity {
     @Subscribe
     public void onChangePage(String pageId) {
         getSupportFragmentManager().beginTransaction()
-                //.replace(R.id.contentContainer, FeedFragment.newInstance(getString(R.string.Mahnmook)))
-                //.setCustomAnimations(R.anim.fade_in,R.anim.fade_out)
                 .replace(R.id.contentContainer, ViewPagerMainFragment.newInstance(pageId))
                 .commit();
 
@@ -207,6 +238,18 @@ public class MainActivity extends AppCompatActivity {
        showViews();
     }
 
+    @Subscribe
+    public void onStartPhotoActivity(BusEvent.PhotoActivityEvent event){
+        Intent intent = new Intent(MainActivity.this,PhotoActivity.class);
+        String[] urlList = event.getUrlList();
+        for(int i =0;i<urlList.length;i++)
+        {
+            intent.putExtra(""+i, urlList[i]);
+        }
+        intent.putExtra("size",urlList.length);
+        startActivity(intent);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.mainmenu, menu);
@@ -220,14 +263,22 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
+        if(item.getItemId() == R.id.action_search){
+            new SimpleSearchDialogCompat(MainActivity.this, "Search...",
+                    "Who are you looking for...?",null, createSampleData(),
+                    new SearchResultListener<SearchModel>() {
+                        @Override
+                        public void onSelected(BaseSearchDialogCompat dialog,
+                                               SearchModel item, int position) {
+                            onChangePage(item.getId());
+                            dialog.dismiss();
+                        }
+                    }).setFilterAutomatically(true).show();
+        }
+
         if(item.getItemId() == R.id.logoutsetting)
         {
-            LoginManager.getInstance().logOut();
-            //appBarLayout = findViewById(R.id.appBarLayout);
-            //appBarLayout.setExpanded(false, true);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.contentContainer, MainFragment.newInstance())
-                    .commit();
+
         }
         return true;
     }
@@ -256,6 +307,18 @@ public class MainActivity extends AppCompatActivity {
     private void showViews() {
         toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
         mSearchView.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+    }
+
+    String[] nameList = {"Mahnmook","Music","Mint","Ant","Ae","Fame","Pada","Petch","Proud","Pim","Sonja","Anny","Nink","Orn"};
+    String[] nameId = {"1705672169741865","108567926503749","138188866783330","445003689233126","709046175950703","1913673758896179","260045927831231","108001133246382","120406398606162","799444370230832","111090532897541","809228849236630","333542507094850","737460709751015"};
+
+    private ArrayList<SearchModel> createSampleData(){
+        ArrayList<SearchModel> items = new ArrayList<>();
+
+        for(int i=0;i<nameList.length;i++)
+            items.add(new SearchModel(nameList[i],nameId[i]));
+
+        return items;
     }
 }
 

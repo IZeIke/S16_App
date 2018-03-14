@@ -7,7 +7,10 @@ import com.example.haritmoolphunt.facebookfeed.dao.Datum;
 import com.example.haritmoolphunt.facebookfeed.dao.Posts;
 import com.example.haritmoolphunt.facebookfeed.template.Contextor;
 
+import org.cryse.widget.persistentsearch.SearchItem;
+
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by nuuneoi on 11/16/2014.
@@ -24,6 +27,8 @@ public class FeedListManager {
 
     private Context mContext;
     private Posts dao;
+    private String[] nameList;
+    private String[] nameId;
 
     private FeedListManager() {
         mContext = Contextor.getInstance().getContext();
@@ -53,5 +58,18 @@ public class FeedListManager {
         else{
             dao.getMoreFeed().setNext("end");
         }
+    }
+
+    public void setmHistorySuggestions(String[] namelist,String[] nameId) {
+        this.nameId = nameId;
+        this.nameList = namelist;
+    }
+
+    public String[] getNameList() {
+        return nameList;
+    }
+
+    public String[] getNameId() {
+        return nameId;
     }
 }

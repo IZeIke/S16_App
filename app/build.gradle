@@ -20,6 +20,12 @@ android {
 }
 
 dependencies {
+    compile 'com.nineoldandroids:library:2.4.0'
+    compile 'com.github.pchmn:MaterialChipsInput:1.0.8'
+    compile 'de.hdodenhof:circleimageview:2.1.0'
+    compile 'com.github.mirrajabi:search-dialog:1.2'
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
     compile 'com.felipecsl.asymmetricgridview:library:2.0.1'
     compile 'org.cryse.widget:persistentsearchview:1.0.4@aar'
     compile 'com.arasthel:spannedgridlayoutmanager:2.0.1'
@@ -40,4 +46,5 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    compile project(path: ':ImageSliderlibrary')
 }

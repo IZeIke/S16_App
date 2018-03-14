@@ -71,7 +71,7 @@ public class ViewPagerMainFragment extends Fragment {
                     case 0:
                         return FeedFragment.newInstance(pageId);
                     case 1:
-                        return UserProfileFragment.newInstance();
+                        return null;
                     default:
                         return null;
                 }
@@ -79,7 +79,7 @@ public class ViewPagerMainFragment extends Fragment {
 
             @Override
             public int getCount() {
-                return 2;
+                return 1;
             }
         });
     }

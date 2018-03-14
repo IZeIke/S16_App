@@ -12,4 +12,17 @@ public class BusEvent {
 
     public static class ShowEvent { /* Additional fields if needed */ }
 
+    public static class PhotoActivityEvent{
+
+        private String[] urlList;
+
+        public PhotoActivityEvent(String[] List){
+            urlList = List;
+        }
+
+        public String[] getUrlList(){
+            return urlList;
+        }
+    }
+
 }

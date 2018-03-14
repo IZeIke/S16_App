@@ -14,11 +14,15 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.haritmoolphunt.facebookfeed.R;
+import com.example.haritmoolphunt.facebookfeed.dao.Accesstoken;
 import com.example.haritmoolphunt.facebookfeed.dao.PageProfile;
 import com.example.haritmoolphunt.facebookfeed.dao.UserProfile;
 import com.example.haritmoolphunt.facebookfeed.event.BusEvent;
+import com.example.haritmoolphunt.facebookfeed.manager.AccessTokenManager;
+import com.example.haritmoolphunt.facebookfeed.manager.AppTokenManager;
 import com.example.haritmoolphunt.facebookfeed.manager.UserProfileManager;
 import com.facebook.AccessToken;
+import com.facebook.AccessTokenSource;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -32,6 +36,10 @@ import com.google.gson.Gson;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONObject;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 /**
  * Created by Harit Moolphunt on 8/1/2561.
@@ -39,8 +47,10 @@ import org.json.JSONObject;
 
 public class MainFragment extends Fragment {
 
-    private LoginButton loginButton;
-    private CallbackManager callbackManager;
+    //private LoginButton loginButton;
+    //private CallbackManager callbackManager;
+
+    //facebook login function in comment
 
     public MainFragment() {
         super();
@@ -73,7 +83,7 @@ public class MainFragment extends Fragment {
     @SuppressWarnings("UnusedParameters")
     private void init(Bundle savedInstanceState) {
         // Init Fragment level's variable(s) here
-        callbackManager = CallbackManager.Factory.create();
+        /*callbackManager = CallbackManager.Factory.create();
         LoginManager.getInstance().registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
                     @Override
@@ -91,7 +101,7 @@ public class MainFragment extends Fragment {
                     public void onError(FacebookException exception) {
                         // App code
                     }
-                });
+                }); */
     }
 
     @SuppressWarnings("UnusedParameters")
@@ -100,10 +110,14 @@ public class MainFragment extends Fragment {
         // Note: State of variable initialized here could not be saved
         //       in onSavedInstanceState
 
+
+        /*
         loginButton = rootView.findViewById(R.id.login_button);
         loginButton.setReadPermissions("email");
         // If using in a fragment
         loginButton.setFragment(this);
+
+
 
         // Callback registration
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -112,7 +126,8 @@ public class MainFragment extends Fragment {
                 // App code
                 Toast.makeText(getContext(),"Log In Success",Toast.LENGTH_SHORT).show();
 
-                EventBus.getDefault().post(new BusEvent.LoginEvent());
+                //EventBus.getDefault().post(new BusEvent.LoginEvent());
+
             }
 
             @Override
@@ -127,6 +142,7 @@ public class MainFragment extends Fragment {
                 Snackbar.make(getView(),"No internet connection.",Snackbar.LENGTH_LONG).show();
             }
         });
+        */
     }
 
     @Override
@@ -142,7 +158,7 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+        //callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
     }
 }
