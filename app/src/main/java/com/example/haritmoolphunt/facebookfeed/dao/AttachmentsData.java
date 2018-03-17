@@ -4,7 +4,7 @@ package com.example.haritmoolphunt.facebookfeed.dao;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Datum_ {
+public class AttachmentsData {
 
     @SerializedName("title")
     @Expose
@@ -20,7 +20,7 @@ public class Datum_ {
     private Subattachments subattachments;
     @SerializedName("media")
     @Expose
-    private Media_ media;
+    private AttachmentsMedia media;
 
     public String getTitle() {
         return title;
@@ -54,11 +54,11 @@ public class Datum_ {
         this.subattachments = subattachments;
     }
 
-    public Media_ getMedia() {
+    public AttachmentsMedia getMedia() {
         return media;
     }
 
-    public void setMedia(Media_ media) {
+    public void setMedia(AttachmentsMedia media) {
         this.media = media;
     }
 

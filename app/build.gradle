@@ -20,6 +20,8 @@ android {
 }
 
 dependencies {
+    compile 'com.jaeger.statusbarutil:library:1.4.0'
+    compile 'cn.jzvd:jiaozivideoplayer:6.2.8'
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.github.pchmn:MaterialChipsInput:1.0.8'
     compile 'de.hdodenhof:circleimageview:2.1.0'

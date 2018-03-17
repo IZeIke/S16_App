@@ -1,28 +1,28 @@
 
-package com.example.haritmoolphunt.facebookfeed.dao;
+package com.example.haritmoolphunt.facebookfeed.dao.video_dao;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Posts {
+public class Video {
 
     @SerializedName("data")
     @Expose
-    private List<FeedData> data = null;
+    private List<Data> data = null;
     @SerializedName("paging")
     @Expose
     private Paging paging;
 
-    public List<FeedData> getFeed() {
+    public List<Data> getData() {
         return data;
     }
 
-    public void setData(List<FeedData> data) {
+    public void setData(List<Data> data) {
         this.data = data;
     }
 
-    public Paging getMoreFeed() {
+    public Paging getPaging() {
         return paging;
     }
 

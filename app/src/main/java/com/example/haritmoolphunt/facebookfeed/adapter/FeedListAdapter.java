@@ -25,12 +25,13 @@ import com.example.haritmoolphunt.facebookfeed.LayoutManager.Helper.MySpanSizeLo
 import com.example.haritmoolphunt.facebookfeed.LayoutManager.SpannedGridLayoutManager;
 import com.example.haritmoolphunt.facebookfeed.R;
 import com.example.haritmoolphunt.facebookfeed.activity.PhotoActivity;
-import com.example.haritmoolphunt.facebookfeed.dao.Datum;
+import com.example.haritmoolphunt.facebookfeed.dao.FeedData;
 import com.example.haritmoolphunt.facebookfeed.dao.Image;
 import com.example.haritmoolphunt.facebookfeed.dao.PageProfile;
 import com.example.haritmoolphunt.facebookfeed.dao.Posts;
 import com.example.haritmoolphunt.facebookfeed.event.BusEvent;
 import com.example.haritmoolphunt.facebookfeed.manager.FeedListManager;
+import com.example.haritmoolphunt.facebookfeed.manager.FeedVideoManager;
 import com.example.haritmoolphunt.facebookfeed.manager.PageProfileManager;
 import com.example.haritmoolphunt.facebookfeed.template.Contextor;
 import com.example.haritmoolphunt.facebookfeed.view.FeedListItem;
@@ -50,6 +51,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+
+import cn.jzvd.JZVideoPlayerStandard;
 
 /**
  * Created by Harit Moolphunt on 13/1/2561.
@@ -75,9 +78,15 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_item_feed, parent, false);
             ViewHolder1 viewHolder = new ViewHolder1(view);
             return viewHolder;
-        }else{
+        }else
+        if(viewType == FEED_PICTURE_ITEM)
+        {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_item_feed_picture, parent, false);
             ViewHolder viewHolder = new ViewHolder(view);
+            return viewHolder;
+        }else{
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_item_feed_video, parent, false);
+            ViewHolder2 viewHolder = new ViewHolder2(view);
             return viewHolder;
         }
     }
@@ -92,7 +101,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if(FeedListManager.getInstance().getDao().getFeed().get(--position).getAttachments() == null){
             return FEED_TEXT_ITEM;
         }else
-        if(FeedListManager.getInstance().getDao().getFeed().get(--position).getAttachments().getData().get(0).getType() != "video_inline"){
+        if(FeedListManager.getInstance().getDao().getFeed().get(position).getAttachments().getData().get(0).getType().compareTo("video_inline") != 0){
             return FEED_PICTURE_ITEM;
         }else{
             return FEED_VIDEO_ITEM;
@@ -106,7 +115,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if(getItemViewType(position) == FEED_TEXT_ITEM) {
             position--;
             PageProfile pageProfile = PageProfileManager.getInstance().getDao();
-            Datum dao = FeedListManager.getInstance().getDao().getFeed().get(position);
+            FeedData dao = FeedListManager.getInstance().getDao().getFeed().get(position);
             ViewHolder1 viewHolder = (ViewHolder1) holder;
             viewHolder.profileName.setText(pageProfile.getName());
 
@@ -114,6 +123,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     .load(pageProfile.getPicture().getData().getUrl())
                     .apply(RequestOptions.circleCropTransform())
                     .into(viewHolder.profilePicture);
+            setClickProfileImage(viewHolder.profilePicture,viewHolder.profileName);
 
             viewHolder.description.setText(dao.getMessage());
             viewHolder.timestamp.setText(getTimeAgoFromUTCString(dao.getCreatedTime()));
@@ -122,7 +132,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if(getItemViewType(position) == FEED_PICTURE_ITEM){
             position--;
             PageProfile pageProfile = PageProfileManager.getInstance().getDao();
-            final Datum dao = FeedListManager.getInstance().getDao().getFeed().get(position);
+            final FeedData dao = FeedListManager.getInstance().getDao().getFeed().get(position);
             ViewHolder viewHolder = (ViewHolder) holder;
             viewHolder.profileName.setText(pageProfile.getName());
 
@@ -130,8 +140,9 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     .load(pageProfile.getPicture().getData().getUrl())
                     .apply(RequestOptions.circleCropTransform())
                     .into(viewHolder.profilePicture);
+            setClickProfileImage(viewHolder.profilePicture,viewHolder.profileName);
 
-            viewHolder.description.setText(dao.getMessage()+" type:"+dao.getAttachments().getData().get(0).getType());
+            viewHolder.description.setText(dao.getMessage());
             viewHolder.timestamp.setText(getTimeAgoFromUTCString(dao.getCreatedTime()));
             //viewHolder.image.setVisibility(View.VISIBLE);
             //viewHolder.photoGridRecyclerView.setVisibility(View.VISIBLE);
@@ -182,10 +193,60 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         }else
         if(getItemViewType(position) == FEED_VIDEO_ITEM){
+            position--;
+            PageProfile pageProfile = PageProfileManager.getInstance().getDao();
+            final FeedData dao = FeedListManager.getInstance().getDao().getFeed().get(position);
+            ViewHolder2 viewHolder = (ViewHolder2) holder;
+            viewHolder.profileName.setText(pageProfile.getName());
+
+            Glide.with(viewHolder.profilePicture.getContext())
+                    .load(pageProfile.getPicture().getData().getUrl())
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(viewHolder.profilePicture);
+            setClickProfileImage(viewHolder.profilePicture,viewHolder.profileName);
+
+            String video_url = "";
+            for(int i=0;i< FeedVideoManager.getInstance().getDao().getData().size();i++)
+            {
+                if(FeedVideoManager.getInstance().getDao().getData().get(i).getId().compareTo(dao.getId().substring(dao.getId().lastIndexOf("_") + 1)) == 0)
+                    video_url = FeedVideoManager.getInstance().getDao().getData().get(i).getSource();
+            }
+
+            viewHolder.description.setText(dao.getMessage());
+            viewHolder.timestamp.setText(getTimeAgoFromUTCString(dao.getCreatedTime()));
+
+
+                viewHolder.video.setUp(video_url, JZVideoPlayerStandard.SCREEN_WINDOW_LIST, "");
+                viewHolder.video.positionInList = position;
+                Glide.with(viewHolder.video.getContext())
+                        .load(dao.getAttachments().getData().get(0).getMedia().getImage().getSrc()).into(((ViewHolder2) holder).video.thumbImageView);
+              /*
+            RequestOptions requestOptions = new RequestOptions().fitCenter();
+
+            Glide.with(viewHolder.videoView.getContext())
+                    .load(dao.getAttachments().getData().get(0).getMedia().getImage().getSrc()).into(viewHolder.videoView.getCoverView());
+            viewHolder.videoView.setVideoPath(video_url).setFingerprint(position); */
 
         }
 
 
+    }
+
+    public void setClickProfileImage(View profileImageView, final TextView textView){
+
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EventBus.getDefault().post(new BusEvent.ProfileActivityEvent());
+            }
+        });
+
+        profileImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EventBus.getDefault().post(new BusEvent.ProfileActivityEvent());
+            }
+        });
     }
 
     @Override
@@ -246,6 +307,30 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             //photoGridRecyclerView = view.findViewById(R.id.photoGridRecyclerView);
 
            // videoView = view.findViewById(R.id.videoView);
+        }
+    }
+
+    public class ViewHolder2 extends RecyclerView.ViewHolder {
+
+        ImageView profilePicture;
+        TextView profileName;
+        TextView timestamp;
+        TextView description;
+        JZVideoPlayerStandard video;
+
+        //RecyclerView photoGridRecyclerView;
+
+
+        public ViewHolder2(View view) {
+            super(view);
+            profilePicture = view.findViewById(R.id.profile_picture);
+            profileName = view.findViewById(R.id.profile_name);
+            timestamp = view.findViewById(R.id.timestamp);
+            description = view.findViewById(R.id.description);
+            video = view.findViewById(R.id.videoplayer);
+            //photoGridRecyclerView = view.findViewById(R.id.photoGridRecyclerView);
+
+
         }
     }
 

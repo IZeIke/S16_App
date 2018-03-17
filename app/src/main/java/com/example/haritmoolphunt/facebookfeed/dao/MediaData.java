@@ -4,7 +4,7 @@ package com.example.haritmoolphunt.facebookfeed.dao;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Datum__ {
+public class MediaData {
 
     @SerializedName("media")
     @Expose

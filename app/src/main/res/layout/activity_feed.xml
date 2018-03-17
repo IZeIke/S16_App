@@ -7,14 +7,10 @@
     android:orientation="vertical"
     tools:context="com.example.haritmoolphunt.facebookfeed.activity.FeedActivity">
 
-    <Button
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-        android:text="2activity"/>
-
-    <FrameLayout
-        android:id="@+id/contentContainer"
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></FrameLayout>
+        android:layout_height="match_parent"
+        android:src="@color/colorAccent"
+        />
 
 </LinearLayout>

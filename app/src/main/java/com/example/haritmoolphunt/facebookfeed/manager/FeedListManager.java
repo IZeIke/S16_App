@@ -3,7 +3,7 @@ package com.example.haritmoolphunt.facebookfeed.manager;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.haritmoolphunt.facebookfeed.dao.Datum;
+import com.example.haritmoolphunt.facebookfeed.dao.FeedData;
 import com.example.haritmoolphunt.facebookfeed.dao.Posts;
 import com.example.haritmoolphunt.facebookfeed.template.Contextor;
 
@@ -50,7 +50,7 @@ public class FeedListManager {
         }
         if(dao.getFeed() == null)
         {
-            dao.setData(new ArrayList<Datum>());
+            dao.setData(new ArrayList<FeedData>());
         }
         dao.getFeed().addAll(dao.getFeed().size(),newDao.getFeed());
         if(newDao.getMoreFeed().getNext() != null)

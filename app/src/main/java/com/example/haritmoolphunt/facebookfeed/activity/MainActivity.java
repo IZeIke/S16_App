@@ -51,6 +51,7 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.jzvd.JZVideoPlayer;
 import ir.mirrajabi.searchdialog.SimpleSearchDialogCompat;
 import ir.mirrajabi.searchdialog.SimpleSearchFilter;
 import ir.mirrajabi.searchdialog.core.BaseSearchDialogCompat;
@@ -250,6 +251,12 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    @Subscribe
+    public void onProfileActivity(BusEvent.ProfileActivityEvent event){
+        Intent intent = new Intent(MainActivity.this,ProfileActivity.class);
+        startActivity(intent);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.mainmenu, menu);
@@ -285,6 +292,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        if (JZVideoPlayer.backPress()) {
+            return;
+        }else
         if(mSearchView.isSearching()) {
             mSearchView.closeSearch();
         } /*else if(mRecyclerView.getVisibility() == View.VISIBLE) {
@@ -297,6 +307,12 @@ public class MainActivity extends AppCompatActivity {
         else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        JZVideoPlayer.releaseAllVideos();
     }
 
     private void hideViews() {

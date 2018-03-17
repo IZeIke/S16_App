@@ -4,17 +4,17 @@ package com.example.haritmoolphunt.facebookfeed.dao;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Media_ {
+public class AttachmentsMedia {
 
     @SerializedName("image")
     @Expose
-    private Image_ image;
+    private ImageSrc image;
 
-    public Image_ getImage() {
+    public ImageSrc getImage() {
         return image;
     }
 
-    public void setImage(Image_ image) {
+    public void setImage(ImageSrc image) {
         this.image = image;
     }
 

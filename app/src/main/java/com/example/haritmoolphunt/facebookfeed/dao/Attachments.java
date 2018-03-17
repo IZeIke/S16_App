@@ -11,13 +11,13 @@ public class Attachments {
 
     @SerializedName("data")
     @Expose
-    private List<Datum_> data = null;
+    private List<AttachmentsData> data = null;
 
-    public List<Datum_> getData() {
+    public List<AttachmentsData> getData() {
         return data;
     }
 
-    public void setData(List<Datum_> data) {
+    public void setData(List<AttachmentsData> data) {
         this.data = data;
     }
 

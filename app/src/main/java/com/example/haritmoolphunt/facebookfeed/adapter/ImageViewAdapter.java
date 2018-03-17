@@ -13,7 +13,7 @@ import com.arasthel.spannedgridlayoutmanager.SpanLayoutParams;
 import com.arasthel.spannedgridlayoutmanager.SpanSize;
 import com.bumptech.glide.Glide;
 import com.example.haritmoolphunt.facebookfeed.R;
-import com.example.haritmoolphunt.facebookfeed.dao.Datum__;
+import com.example.haritmoolphunt.facebookfeed.dao.MediaData;
 import com.example.haritmoolphunt.facebookfeed.dao.Image;
 
 import java.util.List;
@@ -24,9 +24,9 @@ import java.util.List;
 
 public class ImageViewAdapter extends RecyclerView.Adapter<ViewHolder>{
 
-    private List<Datum__> daoImage;
+    private List<MediaData> daoImage;
 
-    public ImageViewAdapter(List<Datum__> Image){
+    public ImageViewAdapter(List<MediaData> Image){
         daoImage = Image;
     }
 

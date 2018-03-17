@@ -4,7 +4,7 @@ package com.example.haritmoolphunt.facebookfeed.dao;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Image_ {
+public class ImageSrc {
 
     @SerializedName("src")
     @Expose

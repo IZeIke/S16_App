@@ -8,13 +8,13 @@ public class Picture {
 
     @SerializedName("data")
     @Expose
-    private Data data;
+    private PhotoData data;
 
-    public Data getData() {
+    public PhotoData getData() {
         return data;
     }
 
-    public void setData(Data data) {
+    public void setData(PhotoData data) {
         this.data = data;
     }
 
