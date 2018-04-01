@@ -13,6 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".activity.MainActivity"
+            android:theme="@style/MyTheme.TranslucentNavigation"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="portrait">
            <!-- <intent-filter>

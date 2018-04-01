@@ -4,12 +4,14 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -26,10 +28,14 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 
+import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
+import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.example.haritmoolphunt.facebookfeed.R;
 import com.example.haritmoolphunt.facebookfeed.dao.Accesstoken;
+import com.example.haritmoolphunt.facebookfeed.dao.UserProfile;
 import com.example.haritmoolphunt.facebookfeed.event.BusEvent;
 import com.example.haritmoolphunt.facebookfeed.fragment.FeedFragment;
+import com.example.haritmoolphunt.facebookfeed.fragment.IgFeedFragment;
 import com.example.haritmoolphunt.facebookfeed.fragment.MainFragment;
 import com.example.haritmoolphunt.facebookfeed.fragment.UserProfileFragment;
 import com.example.haritmoolphunt.facebookfeed.fragment.ViewPagerMainFragment;
@@ -38,6 +44,8 @@ import com.example.haritmoolphunt.facebookfeed.manager.AppTokenManager;
 import com.example.haritmoolphunt.facebookfeed.manager.FeedListManager;
 import com.example.haritmoolphunt.facebookfeed.manager.SampleSuggestionsBuilder;
 import com.example.haritmoolphunt.facebookfeed.manager.SearchModel;
+import com.example.haritmoolphunt.facebookfeed.manager.UserProfileManager;
+import com.example.haritmoolphunt.facebookfeed.manager.helper.NameListCollector;
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
@@ -61,11 +69,15 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.haritmoolphunt.facebookfeed.manager.helper.NameListCollector.*;
+
 public class MainActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private PersistentSearchView mSearchView;
     private View mSearchTintView;
+    NameListCollector nameListCollector;
+    AHBottomNavigation bottomNavigation;
     TabLayout tabLayout;
     RecyclerView recentBar;
     AppBarLayout appBarLayout;
@@ -91,12 +103,51 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initinstance() {
+        nameListCollector = new NameListCollector(getString(R.string.Mahnmook),NameListCollector.nameIGList[0]);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mSearchView = findViewById(R.id.searchview);
         drawerLayout = findViewById(R.id.drawerLayout);
         mSearchTintView = findViewById(R.id.view_search_tint);
         appBarLayout = findViewById(R.id.appBarLayout);
+        bottomNavigation = findViewById(R.id.bottom_navigation);
+
+        AHBottomNavigationItem item1 = new AHBottomNavigationItem("Facebook", R.drawable.ic_facebook);
+        AHBottomNavigationItem item2 = new AHBottomNavigationItem("Instagram", R.drawable.ic_instagram);
+        AHBottomNavigationItem item3 = new AHBottomNavigationItem("Twitter", R.drawable.ic_twitter);
+
+        /*
+        bottomNavigation.setDefaultBackgroundColor(Color.parseColor("#F44336"));
+        bottomNavigation.setAccentColor(Color.WHITE);
+        bottomNavigation.setInactiveColor(Color.parseColor("#cecece"));
+        */
+        bottomNavigation.setAccentColor(Color.parseColor("#F44336"));
+
+        bottomNavigation.addItem(item1);
+        bottomNavigation.addItem(item2);
+        bottomNavigation.addItem(item3);
+
+        bottomNavigation.setTranslucentNavigationEnabled(true);
+
+        bottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
+            @Override
+            public boolean onTabSelected(int position, boolean wasSelected) {
+                if(position == 0)
+                {
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.contentContainer, ViewPagerMainFragment.newInstance(nameListCollector.getFbId()))
+                            .commit();
+                    //EventBus.getDefault().post(new BusEvent.ChangeFragmentEvent(1));
+                }else
+                if(position == 1)
+                {
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.contentContainer, IgFeedFragment.newInstance(UserProfileManager.getInstance().getIg_dao().getGraphql().getUser().getId()))
+                            .commit();
+                }
+                return true;
+            }
+        });
         //appBarLayout.setVisibility(View.VISIBLE);
         //appBarLayout.setExpanded(false, true);
         //tabLayout = findViewById(R.id.tabLayout);
@@ -222,6 +273,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Subscribe
     public void onChangePage(String pageId) {
+        //getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+        nameListCollector.setFbId(pageId);
+
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.contentContainer, ViewPagerMainFragment.newInstance(pageId))
                 .commit();
@@ -325,8 +380,8 @@ public class MainActivity extends AppCompatActivity {
         mSearchView.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
     }
 
-    String[] nameList = {"Mahnmook","Music","Mint","Ant","Ae","Fame","Pada","Petch","Proud","Pim","Sonja","Anny","Nink","Orn"};
-    String[] nameId = {"1705672169741865","108567926503749","138188866783330","445003689233126","709046175950703","1913673758896179","260045927831231","108001133246382","120406398606162","799444370230832","111090532897541","809228849236630","333542507094850","737460709751015"};
+    String[] nameList = NameListCollector.nameList;
+    String[] nameId = NameListCollector.nameId;
 
     private ArrayList<SearchModel> createSampleData(){
         ArrayList<SearchModel> items = new ArrayList<>();
@@ -335,6 +390,16 @@ public class MainActivity extends AppCompatActivity {
             items.add(new SearchModel(nameList[i],nameId[i]));
 
         return items;
+    }
+
+    public void clearBackstack() {
+
+        FragmentManager.BackStackEntry entry = getSupportFragmentManager().getBackStackEntryAt(
+                0);
+        getSupportFragmentManager().popBackStack(entry.getId(),
+                FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        getSupportFragmentManager().executePendingTransactions();
+
     }
 }
 

@@ -9,77 +9,31 @@
     android:layout_width="match_parent"
    >
 
-  <!--  <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            >
-
-            <FrameLayout
-                android:id="@+id/contentContainer"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                ></FrameLayout>
-
-        </LinearLayout>
-
-        <org.cryse.widget.persistentsearch.PersistentSearchView
-            android:id="@+id/searchview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:elevation="4dp"
-            app:persistentSV_logoString="@string/app_name"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:persistentSV_searchTextColor="?android:textColorPrimary"
-            app:persistentSV_editTextColor="?android:textColorPrimary"
-            app:persistentSV_editHintText="Search"
-            app:persistentSV_editHintTextColor="?android:textColorHint"
-            app:persistentSV_displayMode="toolbar"
-            app:persistentSV_homeButtonMode="burger"
-            app:persistentSV_searchCardElevation="2dp"
-            app:persistentSV_customToolbarHeight="64dp"/>
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            app:layout_scrollFlags="scroll|enterAlways"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            >
-        </android.support.v7.widget.Toolbar>
-
-    </FrameLayout> -->
-
  <android.support.design.widget.CoordinatorLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-   <LinearLayout
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       android:orientation="vertical"
-       app:layout_behavior="@string/appbar_scrolling_view_behavior"
-       >
-        <!--
-      <android.support.v7.widget.RecyclerView
-          android:id="@+id/recentBar"
-          android:background="?attr/colorPrimary"
-          android:layout_width="match_parent"
-          android:layout_height="50dp"
-          ></android.support.v7.widget.RecyclerView> -->
+
+     <!--<LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:orientation="vertical"
+         app:layout_behavior="@string/appbar_scrolling_view_behavior"
+         >
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recentBar"
+            android:background="?attr/colorPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            ></android.support.v7.widget.RecyclerView> -->
 
 
        <RelativeLayout
            android:layout_width="match_parent"
-           android:layout_height="match_parent">
+           android:layout_height="match_parent"
+           app:layout_behavior="@string/appbar_scrolling_view_behavior"
+           >
 
             <FrameLayout
                 android:id="@+id/contentContainer"
@@ -101,7 +55,7 @@
 
        </RelativeLayout>
 
-   </LinearLayout>
+
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appBarLayout"
@@ -110,7 +64,7 @@
             app:elevation="0dp"
             >
 
-           <org.cryse.widget.persistentsearch.PersistentSearchView
+          <org.cryse.widget.persistentsearch.PersistentSearchView
                 android:id="@+id/searchview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -131,6 +85,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                android:layout_marginTop="24dp"
                 app:layout_scrollFlags="scroll|enterAlways"
                 android:background="?attr/colorPrimary"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
@@ -138,9 +93,14 @@
 
         </android.support.design.widget.AppBarLayout>
 
+     <com.aurelhubert.ahbottomnavigation.AHBottomNavigation
+         android:id="@+id/bottom_navigation"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_gravity="bottom"/>
+
 </android.support.design.widget.CoordinatorLayout>
 
-   
    <FrameLayout
        android:id="@+id/menuContainer"
        android:layout_gravity="start"

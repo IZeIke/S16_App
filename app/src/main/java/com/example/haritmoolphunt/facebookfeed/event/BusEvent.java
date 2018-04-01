@@ -29,4 +29,17 @@ public class BusEvent {
 
     }
 
+    public static class ChangeFragmentEvent{
+        private int item;
+
+        public ChangeFragmentEvent(int item)
+        {
+            this.item = item;
+        }
+
+        public int getItem() {
+            return item;
+        }
+    }
+
 }

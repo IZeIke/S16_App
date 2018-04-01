@@ -12,6 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.haritmoolphunt.facebookfeed.R;
+import com.example.haritmoolphunt.facebookfeed.event.BusEvent;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 
 /**
@@ -90,9 +94,26 @@ public class ViewPagerMainFragment extends Fragment {
         // Save Instance (Fragment level's variables) State here
     }
 
+    @Subscribe
+    public void OnChangePage(BusEvent.ChangeFragmentEvent event) {
+        viewPager.setCurrentItem(event.getItem());
+    }
+
     @SuppressWarnings("UnusedParameters")
     private void onRestoreInstanceState(Bundle savedInstanceState) {
         // Restore Instance (Fragment level's variables) State here
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
 }

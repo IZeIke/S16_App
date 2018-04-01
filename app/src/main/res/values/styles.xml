@@ -13,6 +13,10 @@
         <item name="android:windowBackground">@color/colorPrimary</item>
     </style>
 
+    <style name="MyTheme.TranslucentNavigation" parent="@style/AppTheme">
+        <item name="android:windowTranslucentNavigation" tools:ignore="NewApi">true</item>
+    </style>
+
     <style name="TranspantTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">#2196F3</item>

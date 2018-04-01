@@ -35,6 +35,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import cn.jzvd.JZVideoPlayer;
+
 
 /**
  * Created by nuuneoi on 11/16/2014.
@@ -152,6 +154,7 @@ public class UserProfileFragment extends Fragment {
                 new RecyclerItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                        JZVideoPlayer.releaseAllVideos();
                         EventBus.getDefault().post(sweat16Id[position]);
                     }
                 }
@@ -161,6 +164,7 @@ public class UserProfileFragment extends Fragment {
                 new RecyclerItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                        JZVideoPlayer.releaseAllVideos();
                         EventBus.getDefault().post(bnkId[position]);
                     }
                 }

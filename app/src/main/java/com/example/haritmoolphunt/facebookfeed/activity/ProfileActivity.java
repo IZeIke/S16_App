@@ -2,6 +2,7 @@ package com.example.haritmoolphunt.facebookfeed.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toolbar;
 
 import com.example.haritmoolphunt.facebookfeed.R;
 import com.example.haritmoolphunt.facebookfeed.fragment.ProfileFragment;
@@ -28,7 +29,11 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void initinstance() {
+    }
 
-
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }

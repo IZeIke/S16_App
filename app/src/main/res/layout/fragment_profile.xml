@@ -3,13 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="false"
+    android:background="#eeeeee"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="256dp">
+        android:layout_height="256dp"
+        >
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:layout_width="match_parent"
@@ -25,6 +27,7 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/sweatbg"
                 android:tint="#60000000"
+
                 />
 
             <RelativeLayout
@@ -84,6 +87,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:layout_margin="10dp"
+                app:cardElevation="6dp"
                 >
 
                 <RelativeLayout
@@ -117,7 +121,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Total Likes"
+                                android:text="Total FB Likes"
                                 android:layout_gravity="center"
                             />
 
@@ -140,13 +144,14 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_gravity="center"
                                 android:text="1,000,000"
                                 android:textSize="30sp"
                             />
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Total Follows"
+                                android:text="Total IG Followers"
                                 android:layout_gravity="center"
                             />
 
@@ -171,6 +176,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="230dp"
                 android:layout_margin="10dp"
+                app:cardElevation="6dp"
                 >
 
                 <RelativeLayout
@@ -242,6 +248,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_margin="10dp"
+                app:cardElevation="6dp"
                 >
 
                 <LinearLayout

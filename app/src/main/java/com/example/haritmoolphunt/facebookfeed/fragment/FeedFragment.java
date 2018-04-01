@@ -27,6 +27,7 @@ import com.example.haritmoolphunt.facebookfeed.adapter.FeedListAdapter;
 import com.example.haritmoolphunt.facebookfeed.dao.PageProfile;
 import com.example.haritmoolphunt.facebookfeed.dao.Posts;
 import com.example.haritmoolphunt.facebookfeed.dao.UserProfile;
+import com.example.haritmoolphunt.facebookfeed.dao.ig_dao.IG_dao;
 import com.example.haritmoolphunt.facebookfeed.dao.video_dao.Video;
 import com.example.haritmoolphunt.facebookfeed.event.BusEvent;
 import com.example.haritmoolphunt.facebookfeed.manager.AccessTokenManager;
@@ -35,6 +36,10 @@ import com.example.haritmoolphunt.facebookfeed.manager.FeedListManager;
 import com.example.haritmoolphunt.facebookfeed.manager.FeedVideoManager;
 import com.example.haritmoolphunt.facebookfeed.manager.PageProfileManager;
 import com.example.haritmoolphunt.facebookfeed.manager.UserProfileManager;
+import com.example.haritmoolphunt.facebookfeed.manager.helper.InternetCheck;
+import com.example.haritmoolphunt.facebookfeed.manager.helper.NameListCollector;
+import com.example.haritmoolphunt.facebookfeed.manager.http.IGProfileService;
+import com.example.haritmoolphunt.facebookfeed.template.Contextor;
 import com.example.haritmoolphunt.facebookfeed.template.FragmentTemplateFull;
 import com.example.haritmoolphunt.facebookfeed.view.SimpleDividerItemDecoration;
 import com.facebook.AccessToken;
@@ -53,6 +58,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import cn.jzvd.JZVideoPlayer;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Harit Moolphunt on 10/1/2561.
@@ -192,6 +200,23 @@ public class FeedFragment extends Fragment {
     }
 
     private void loadData() {
+        IGProfileService service = FeedListManager.getInstance().getService();
+        String igID = NameListCollector.findIgFromFbID(pageID);
+        Call<IG_dao> igDaoCall = service.getIgProfileDao(igID);
+
+        igDaoCall.enqueue(new Callback<IG_dao>() {
+            @Override
+            public void onResponse(Call<IG_dao> call, Response<IG_dao> response) {
+                UserProfileManager.getInstance().setIg_dao(response.body());
+                Log.d("check1",response.body().getLoggingPageId());
+            }
+
+            @Override
+            public void onFailure(Call<IG_dao> call, Throwable t) {
+
+            }
+        });
+
         GraphRequest request1 = getFeedGraphRequest();
         // request.executeAsync();
 
@@ -308,7 +333,6 @@ public class FeedFragment extends Fragment {
         request.setParameters(parameters);
         return request;
     }
-
 
     boolean internet_connection(){
         //Check if connected to internet, output accordingly
