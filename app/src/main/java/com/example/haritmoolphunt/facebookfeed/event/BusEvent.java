@@ -42,4 +42,6 @@ public class BusEvent {
         }
     }
 
+    public static class ScrollUpEvent{}
+
 }

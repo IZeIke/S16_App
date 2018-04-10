@@ -16,24 +16,36 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.haritmoolphunt.facebookfeed.LayoutManager.SpeedyLinearLayoutManager;
 import com.example.haritmoolphunt.facebookfeed.R;
+import com.example.haritmoolphunt.facebookfeed.activity.MainActivity;
 import com.example.haritmoolphunt.facebookfeed.adapter.FeedListAdapter;
 import com.example.haritmoolphunt.facebookfeed.adapter.IgFeedAdapter;
 import com.example.haritmoolphunt.facebookfeed.dao.ig_dao.IG_dao;
 import com.example.haritmoolphunt.facebookfeed.dao.ig_feed_data.Data;
 import com.example.haritmoolphunt.facebookfeed.dao.ig_feed_data.IG_feed_dao;
+import com.example.haritmoolphunt.facebookfeed.event.BusEvent;
 import com.example.haritmoolphunt.facebookfeed.manager.FeedListManager;
 
+import com.example.haritmoolphunt.facebookfeed.manager.RecyclerviewPosition;
 import com.example.haritmoolphunt.facebookfeed.manager.UserProfileManager;
 import com.example.haritmoolphunt.facebookfeed.manager.helper.InternetCheck;
+import com.example.haritmoolphunt.facebookfeed.manager.helper.NameListCollector;
 import com.example.haritmoolphunt.facebookfeed.manager.http.IGProfileService;
 import com.example.haritmoolphunt.facebookfeed.template.Contextor;
 import com.facebook.AccessToken;
 import com.google.gson.Gson;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import java.io.IOException;
+
 import javax.xml.datatype.Duration;
 
 import cn.jzvd.JZVideoPlayer;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -44,13 +56,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by Harit Moolphunt on 24/3/2561.
  */
 
-public class IgFeedFragment extends Fragment {
+public class IgFeedFragment extends Fragment{
 
-    String pageID;
+    String pageName;
     RecyclerView recyclerView;
     SwipeRefreshLayout swipeRefreshLayout;
     boolean isLoadingMore = false;
     IgFeedAdapter igFeedAdapter;
+    String[] parts;
 
     public IgFeedFragment() {
         super();
@@ -67,7 +80,7 @@ public class IgFeedFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        pageID = getArguments().getString("pageID");
+        pageName = getArguments().getString("pageID");
 
         init(savedInstanceState);
 
@@ -86,6 +99,7 @@ public class IgFeedFragment extends Fragment {
     @SuppressWarnings("UnusedParameters")
     private void init(Bundle savedInstanceState) {
         // Init Fragment level's variable(s) here
+        parts = pageName.split(",");
     }
 
     @SuppressWarnings("UnusedParameters")
@@ -95,8 +109,8 @@ public class IgFeedFragment extends Fragment {
         //       in onSavedInstanceState]
         recyclerView = rootView.findViewById(R.id.recyclerview);
         igFeedAdapter = new IgFeedAdapter();
-        final LinearLayoutManager llm = new LinearLayoutManager(getActivity()
-                , LinearLayoutManager.VERTICAL
+        final SpeedyLinearLayoutManager llm = new SpeedyLinearLayoutManager(getActivity()
+                , SpeedyLinearLayoutManager.VERTICAL
                 , false);
         recyclerView.setLayoutManager(llm);
         //recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
@@ -114,11 +128,12 @@ public class IgFeedFragment extends Fragment {
                 firstVisiblesItems = llm.findFirstVisibleItemPosition();
                 if(firstVisiblesItems + visibleItemCount >= totalItemCount){
                     if(igFeedAdapter.getItemCount() > 0){
-                        //loadMoreData();
+                        loadMoreData();
                     }
                 }else{
                     isLoadingMore = false;
                 }
+                RecyclerviewPosition.getInstance().setPosition(firstVisiblesItems);
             }
         });
 
@@ -152,7 +167,7 @@ public class IgFeedFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if(internet_connection())
+                if(InternetCheck.internet_connection(getActivity()))
                     loadData();
                 else
                     Snackbar.make(getView(),"No internet connection.",Snackbar.LENGTH_LONG).show();
@@ -162,12 +177,13 @@ public class IgFeedFragment extends Fragment {
 
 
 
-        if(internet_connection()) {
+        if(InternetCheck.internet_connection(getActivity())) {
             loadData();
         }else
             Toast.makeText(getContext(),"No internet connection",Toast.LENGTH_LONG).show();
 
     }
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -188,23 +204,54 @@ public class IgFeedFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        FeedListManager.getInstance().getIg_dao().getData().getUser().getEdgeOwnerToTimelineMedia().getEdges().clear();
+        EventBus.getDefault().unregister(this);
+        if(FeedListManager.getInstance().getIg_dao() != null) {
+            FeedListManager.getInstance().getIg_dao().getData().getUser().getEdgeOwnerToTimelineMedia().getEdges().clear();
+        }
         igFeedAdapter.notifyDataSetChanged();
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Subscribe
+    public void onMessageEvent(BusEvent.ScrollUpEvent event) {
+        recyclerView.smoothScrollToPosition(0);
+    }
+
+
 
     private void loadData() {
         // TODO: load data
         IGProfileService service = FeedListManager.getInstance().getService();
 
-        Call<IG_feed_dao> igDataCall = service.getIgFeedDao("{\"id\":\""+pageID+"\",\"first\":20}");
+        Call<IG_dao> igDaoCall = service.getIgProfileDao(parts[0]);
+        Call<IG_feed_dao> igDataCall = service.getIgFeedDao("{\"id\":\""+parts[1]+"\",\"first\":20}");
+
+        igDaoCall.enqueue(new Callback<IG_dao>() {
+            @Override
+            public void onResponse(Call<IG_dao> call, Response<IG_dao> response) {
+                UserProfileManager.getInstance().setIg_dao(response.body());
+                Log.d("check1", "onResponse: "+response.code());
+                igFeedAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Call<IG_dao> call, Throwable t) {
+
+            }
+        });
 
         igDataCall.enqueue(new Callback<IG_feed_dao>() {
             @Override
             public void onResponse(Call<IG_feed_dao> call, Response<IG_feed_dao> response) {
                 FeedListManager.getInstance().setIg_dao(response.body());
-                //Log.d("check2",FeedListManager.getInstance().getIg_dao().getData().getUser().getEdgeOwnerToTimelineMedia().getEdges().get(0).getNode().getEdgeMediaToCaption().getEdges().get(0).getNode().getText());
+                Log.d("check2", "onResponse: "+response.toString());
+               // Log.d("check2",FeedListManager.getInstance().getIg_dao().getData().getUser().getEdgeOwnerToTimelineMedia().getEdges().get(0).getNode().getEdgeMediaToCaption().getEdges().get(0).getNode().getText());
                 igFeedAdapter.notifyDataSetChanged();
-
             }
 
             @Override
@@ -215,26 +262,34 @@ public class IgFeedFragment extends Fragment {
     }
 
     private void loadMoreData(){
+        Log.d("checkEnd",FeedListManager.getInstance().getIg_dao().getData().getUser().getEdgeOwnerToTimelineMedia().getPageInfo().getEndCursor());
         if(isLoadingMore){
             return;
         }
-        if(FeedListManager.getInstance().getDao().getMoreFeed().getNext() == "end"){
+        if(FeedListManager.getInstance().getIg_dao().getData().getUser().getEdgeOwnerToTimelineMedia().getPageInfo().getEndCursor() == "end"){
             Snackbar.make(getView(),"End Feed",Snackbar.LENGTH_LONG).show();
             return;
         }
         isLoadingMore = true;
         // TODO: add data to dao
-    }
+        IGProfileService service = FeedListManager.getInstance().getService();
+        String nextPage = FeedListManager.getInstance().getIg_dao().getData().getUser().getEdgeOwnerToTimelineMedia().getPageInfo().getEndCursor();
+        Call<IG_feed_dao> igDataCall = service.getIgFeedDao("{\"id\":\""+parts[1]+"\",\"first\":20,\"after\":\""+nextPage+"\"}");
 
-    boolean internet_connection(){
-        //Check if connected to internet, output accordingly
-        ConnectivityManager cm =
-                (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        igDataCall.enqueue(new Callback<IG_feed_dao>() {
+            @Override
+            public void onResponse(Call<IG_feed_dao> call, Response<IG_feed_dao> response) {
+                FeedListManager.getInstance().addIgDaoAtButtomPosition(response.body());
+                //Log.d("check2",FeedListManager.getInstance().getIg_dao().getData().getUser().getEdgeOwnerToTimelineMedia().getEdges().get(0).getNode().getEdgeMediaToCaption().getEdges().get(0).getNode().getText());
+                igFeedAdapter.notifyDataSetChanged();
 
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
+            }
 
-        return isConnected;
+            @Override
+            public void onFailure(Call<IG_feed_dao> call, Throwable t) {
+
+            }
+        });
+
     }
 }

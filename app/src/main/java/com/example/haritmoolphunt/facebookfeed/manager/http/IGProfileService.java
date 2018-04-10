@@ -21,4 +21,7 @@ public interface IGProfileService {
 
     @GET("graphql/query/?query_hash=472f257a40c653c64c666ce877d59d2b")
     Call<IG_feed_dao> getIgFeedDao(@Query("variables") String id);
+
+    @GET("graphql/query/?query_hash=472f257a40c653c64c666ce877d59d2b")
+    Call<IG_feed_dao> getIgMoreFeedDao(@Query("variables") String id);
 }

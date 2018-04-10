@@ -20,6 +20,7 @@ android {
 }
 
 dependencies {
+    compile 'com.squareup.okhttp3:logging-interceptor:3.9.1'
     compile 'com.aurelhubert:ahbottomnavigation:2.1.0'
     compile 'com.jaeger.statusbarutil:library:1.4.0'
     compile 'cn.jzvd:jiaozivideoplayer:6.2.8'

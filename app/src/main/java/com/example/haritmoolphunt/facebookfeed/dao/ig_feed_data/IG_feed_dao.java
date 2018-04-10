@@ -4,6 +4,8 @@ package com.example.haritmoolphunt.facebookfeed.dao.ig_feed_data;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+
 public class IG_feed_dao {
 
     @SerializedName("data")

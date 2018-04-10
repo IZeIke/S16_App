@@ -42,6 +42,7 @@ import com.example.haritmoolphunt.facebookfeed.fragment.ViewPagerMainFragment;
 import com.example.haritmoolphunt.facebookfeed.manager.AccessTokenManager;
 import com.example.haritmoolphunt.facebookfeed.manager.AppTokenManager;
 import com.example.haritmoolphunt.facebookfeed.manager.FeedListManager;
+import com.example.haritmoolphunt.facebookfeed.manager.RecyclerviewPosition;
 import com.example.haritmoolphunt.facebookfeed.manager.SampleSuggestionsBuilder;
 import com.example.haritmoolphunt.facebookfeed.manager.SearchModel;
 import com.example.haritmoolphunt.facebookfeed.manager.UserProfileManager;
@@ -116,12 +117,12 @@ public class MainActivity extends AppCompatActivity {
         AHBottomNavigationItem item2 = new AHBottomNavigationItem("Instagram", R.drawable.ic_instagram);
         AHBottomNavigationItem item3 = new AHBottomNavigationItem("Twitter", R.drawable.ic_twitter);
 
-        /*
-        bottomNavigation.setDefaultBackgroundColor(Color.parseColor("#F44336"));
+
+        bottomNavigation.setDefaultBackgroundColor(Color.parseColor("#FF1744"));
         bottomNavigation.setAccentColor(Color.WHITE);
-        bottomNavigation.setInactiveColor(Color.parseColor("#cecece"));
-        */
-        bottomNavigation.setAccentColor(Color.parseColor("#F44336"));
+        bottomNavigation.setInactiveColor(Color.parseColor("#E0E0E0"));
+
+        //bottomNavigation.setAccentColor(Color.parseColor("#F44336"));
 
         bottomNavigation.addItem(item1);
         bottomNavigation.addItem(item2);
@@ -141,8 +142,9 @@ public class MainActivity extends AppCompatActivity {
                 }else
                 if(position == 1)
                 {
+                    String igInfo = NameListCollector.findIgFromFbID(nameListCollector.getFbId());
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.contentContainer, IgFeedFragment.newInstance(UserProfileManager.getInstance().getIg_dao().getGraphql().getUser().getId()))
+                            .replace(R.id.contentContainer, IgFeedFragment.newInstance(igInfo))
                             .commit();
                 }
                 return true;
@@ -153,6 +155,7 @@ public class MainActivity extends AppCompatActivity {
         //tabLayout = findViewById(R.id.tabLayout);
        // tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
        // tabLayout.addTab(tabLayout.newTab().setText("Tab 2"));
+
         actionBarDrawerToggle = new ActionBarDrawerToggle(
                 MainActivity.this ,
                 drawerLayout,
@@ -162,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(NameListCollector.nameList[0]);
 
 
         mSearchView.setHomeButtonListener(new PersistentSearchView.HomeButtonListener() {
@@ -274,12 +278,18 @@ public class MainActivity extends AppCompatActivity {
     @Subscribe
     public void onChangePage(String pageId) {
         //getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
+        getSupportActionBar().setTitle(findNameFromFbID(pageId));
         nameListCollector.setFbId(pageId);
-
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.contentContainer, ViewPagerMainFragment.newInstance(pageId))
-                .commit();
+        if(bottomNavigation.getCurrentItem() == 0) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.contentContainer, ViewPagerMainFragment.newInstance(pageId))
+                    .commit();
+        }else{
+            String igInfo = NameListCollector.findIgFromFbID(pageId);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.contentContainer, IgFeedFragment.newInstance(igInfo))
+                    .commit();
+        }
 
         drawerLayout.closeDrawer(Gravity.START);
     }
@@ -352,12 +362,13 @@ public class MainActivity extends AppCompatActivity {
         }else
         if(mSearchView.isSearching()) {
             mSearchView.closeSearch();
-        } /*else if(mRecyclerView.getVisibility() == View.VISIBLE) {
-            mResultAdapter.clear();
-            mRecyclerView.setVisibility(View.GONE);
-        }*/
+        }
         else if(drawerLayout.isDrawerOpen(Gravity.LEFT)){
             drawerLayout.closeDrawer(Gravity.START);
+        }else
+        if(RecyclerviewPosition.getInstance().getPosition() != 0){
+            EventBus.getDefault().post(new BusEvent.ScrollUpEvent());
+            return;
         }
         else {
             super.onBackPressed();
@@ -390,16 +401,6 @@ public class MainActivity extends AppCompatActivity {
             items.add(new SearchModel(nameList[i],nameId[i]));
 
         return items;
-    }
-
-    public void clearBackstack() {
-
-        FragmentManager.BackStackEntry entry = getSupportFragmentManager().getBackStackEntryAt(
-                0);
-        getSupportFragmentManager().popBackStack(entry.getId(),
-                FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        getSupportFragmentManager().executePendingTransactions();
-
     }
 }
 

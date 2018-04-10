@@ -1,6 +1,7 @@
 package com.example.haritmoolphunt.facebookfeed.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,8 @@ import com.example.haritmoolphunt.facebookfeed.dao.ig_dao.User;
 import com.example.haritmoolphunt.facebookfeed.manager.FeedListManager;
 import com.example.haritmoolphunt.facebookfeed.manager.UserProfileManager;
 import com.pchmn.materialchips.ChipView;
+
+import java.text.SimpleDateFormat;
 
 /**
  * Created by Harit Moolphunt on 30/3/2561.
@@ -52,14 +55,22 @@ public class IgFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        User profile = UserProfileManager.getInstance().getIg_dao().getGraphql().getUser();
         ViewHolder viewHolder = (ViewHolder) holder;
-        viewHolder.profileName.setText(profile.getUsername());
-        Glide.with(viewHolder.profilePicture.getContext())
-                .load(profile.getProfilePicUrlHd())
-                .apply(RequestOptions.circleCropTransform())
-                .into(viewHolder.profilePicture);
-        viewHolder.description.setText(FeedListManager.getInstance().getIg_dao().getData().getUser().getEdgeOwnerToTimelineMedia().getEdges().get(position).getNode().getEdgeMediaToCaption().getEdges().get(0).getNode().getText());
+        if(UserProfileManager.getInstance().getIg_dao() != null) {
+            User profile = UserProfileManager.getInstance().getIg_dao().getGraphql().getUser();
+
+            viewHolder.profileName.setText(profile.getUsername());
+            Glide.with(viewHolder.profilePicture.getContext())
+                    .load(profile.getProfilePicUrlHd())
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(viewHolder.profilePicture);
+        }
+
+
+        if(FeedListManager.getInstance().getIg_dao().getData().getUser().getEdgeOwnerToTimelineMedia().getEdges().get(position).getNode().getEdgeMediaToCaption().getEdges().size() != 0) {
+            viewHolder.description.setText(FeedListManager.getInstance().getIg_dao().getData().getUser().getEdgeOwnerToTimelineMedia().getEdges().get(position).getNode().getEdgeMediaToCaption().getEdges().get(0).getNode().getText());
+        }
+        viewHolder.timestamp.setText(getTimeAgoFromUnixTimeString(FeedListManager.getInstance().getIg_dao().getData().getUser().getEdgeOwnerToTimelineMedia().getEdges().get(position).getNode().getTakenAtTimestamp()));
 
         RequestOptions requestOptions = new RequestOptions().fitCenter();
         requestOptions.placeholder(R.drawable.placeholder);
@@ -68,6 +79,7 @@ public class IgFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 .setDefaultRequestOptions(requestOptions)
                 .load(FeedListManager.getInstance().getIg_dao().getData().getUser().getEdgeOwnerToTimelineMedia().getEdges().get(position).getNode().getDisplayUrl())
                 .into(viewHolder.image);
+
     }
 
     @Override
@@ -101,5 +113,15 @@ public class IgFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             image = view.findViewById(R.id.feedImage);
             chip = view.findViewById(R.id.chip_view);
         }
+    }
+
+    private CharSequence getTimeAgoFromUnixTimeString(int unixTimeStamp) {
+        long unix = (long) unixTimeStamp;
+        long timeMillis = unix * 1000;
+        CharSequence timeAgo = DateUtils.getRelativeTimeSpanString(
+                timeMillis,
+                System.currentTimeMillis()-25200000, DateUtils.SECOND_IN_MILLIS);
+
+        return timeAgo.toString().toUpperCase();
     }
 }

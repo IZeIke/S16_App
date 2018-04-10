@@ -5,6 +5,8 @@ import android.util.Log;
 
 import com.example.haritmoolphunt.facebookfeed.dao.FeedData;
 import com.example.haritmoolphunt.facebookfeed.dao.Posts;
+import com.example.haritmoolphunt.facebookfeed.dao.ig_feed_data.Data;
+import com.example.haritmoolphunt.facebookfeed.dao.ig_feed_data.Edge;
 import com.example.haritmoolphunt.facebookfeed.dao.ig_feed_data.IG_feed_dao;
 import com.example.haritmoolphunt.facebookfeed.manager.http.IGProfileService;
 import com.example.haritmoolphunt.facebookfeed.template.Contextor;
@@ -14,6 +16,8 @@ import org.cryse.widget.persistentsearch.SearchItem;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -40,6 +44,10 @@ public class FeedListManager {
 
     private FeedListManager() {
         mContext = Contextor.getInstance().getContext();
+
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
@@ -72,6 +80,27 @@ public class FeedListManager {
             dao.getMoreFeed().setNext(newDao.getMoreFeed().getNext());
         else{
             dao.getMoreFeed().setNext("end");
+        }
+    }
+
+    public void addIgDaoAtButtomPosition(IG_feed_dao newDao)
+    {
+        if(ig_dao == null)
+        {
+            ig_dao = new IG_feed_dao();
+        }
+        if(ig_dao.getData() == null)
+        {
+            ig_dao.getData().getUser().getEdgeOwnerToTimelineMedia().setEdges(new ArrayList<Edge>());
+        }
+
+        ig_dao.getData().getUser().getEdgeOwnerToTimelineMedia().getEdges().addAll(ig_dao.getData().getUser().getEdgeOwnerToTimelineMedia().getEdges().size()
+                ,newDao.getData().getUser().getEdgeOwnerToTimelineMedia().getEdges());
+
+        if(newDao.getData().getUser().getEdgeOwnerToTimelineMedia().getPageInfo().getHasNextPage() != false)
+            ig_dao.getData().getUser().getEdgeOwnerToTimelineMedia().getPageInfo().setEndCursor(newDao.getData().getUser().getEdgeOwnerToTimelineMedia().getPageInfo().getEndCursor());
+        else{
+            ig_dao.getData().getUser().getEdgeOwnerToTimelineMedia().getPageInfo().setEndCursor("end");
         }
     }
 

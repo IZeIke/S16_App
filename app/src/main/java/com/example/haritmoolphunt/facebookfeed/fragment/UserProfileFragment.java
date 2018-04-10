@@ -99,11 +99,11 @@ public class UserProfileFragment extends Fragment {
         //userName = rootView.findViewById(R.id.user_profile_name);
         //profilePicture = rootView.findViewById(R.id.user_profile_picture);
         sweatButton = rootView.findViewById(R.id.sweat16_button);
-        bnkButton = rootView.findViewById(R.id.bnk48_button);
+        //bnkButton = rootView.findViewById(R.id.bnk48_button);
         sweatButton.setName("SWEAT16!");
         sweatButton.setPicture(getResources().getDrawable(R.drawable.sweat16logo));
-        bnkButton.setName("BNK48");
-        bnkButton.setPicture(getResources().getDrawable(R.drawable.bnk48logo));
+        //bnkButton.setName("BNK48");
+        //bnkButton.setPicture(getResources().getDrawable(R.drawable.bnk48logo));
 
         /*GraphRequest request = GraphRequest.newMeRequest(
                 AccessToken.getCurrentAccessToken(),
@@ -129,8 +129,8 @@ public class UserProfileFragment extends Fragment {
         request.executeAsync(); */
 
         recyclerView = rootView.findViewById(R.id.name_RecyclerView);
-        bnkRecyclerView = rootView.findViewById(R.id.bnk48_RecyclerView);
-        bnkListAdapter = new NameListAdapter(bnkList);
+        //bnkRecyclerView = rootView.findViewById(R.id.bnk48_RecyclerView);
+        //bnkListAdapter = new NameListAdapter(bnkList);
         nameListAdapter = new NameListAdapter(sweat16List);
         final LinearLayoutManager llm1 = new LinearLayoutManager(getActivity()
                 , LinearLayoutManager.VERTICAL
@@ -144,11 +144,11 @@ public class UserProfileFragment extends Fragment {
         recyclerView.setVisibility(View.GONE);
         nameListAdapter.notifyDataSetChanged();
 
-        bnkRecyclerView.setLayoutManager(llm2);
-        bnkRecyclerView.setNestedScrollingEnabled(false);
-        bnkRecyclerView.setAdapter(bnkListAdapter);
-        bnkRecyclerView.setVisibility(View.GONE);
-        bnkListAdapter.notifyDataSetChanged();
+       // bnkRecyclerView.setLayoutManager(llm2);
+       // bnkRecyclerView.setNestedScrollingEnabled(false);
+       // bnkRecyclerView.setAdapter(bnkListAdapter);
+       // bnkRecyclerView.setVisibility(View.GONE);
+        //bnkListAdapter.notifyDataSetChanged();
 
         RecyclerItemClickSupport.addTo(recyclerView).setOnItemClickListener(
                 new RecyclerItemClickSupport.OnItemClickListener() {
@@ -160,7 +160,7 @@ public class UserProfileFragment extends Fragment {
                 }
         );
 
-        RecyclerItemClickSupport.addTo(bnkRecyclerView).setOnItemClickListener(
+       /* RecyclerItemClickSupport.addTo(bnkRecyclerView).setOnItemClickListener(
                 new RecyclerItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
@@ -168,7 +168,7 @@ public class UserProfileFragment extends Fragment {
                         EventBus.getDefault().post(bnkId[position]);
                     }
                 }
-        );
+        ); */
 
         sweatButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -180,7 +180,7 @@ public class UserProfileFragment extends Fragment {
             }
         });
 
-        bnkButton.setOnClickListener(new View.OnClickListener() {
+/*        bnkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(bnkRecyclerView.getVisibility() == View.VISIBLE)
@@ -188,7 +188,7 @@ public class UserProfileFragment extends Fragment {
                 else
                     bnkRecyclerView.setVisibility(View.VISIBLE);
             }
-        });
+        }); */
     }
 
     @Override

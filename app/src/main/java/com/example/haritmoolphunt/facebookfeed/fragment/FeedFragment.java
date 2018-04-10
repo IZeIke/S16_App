@@ -1,5 +1,6 @@
 package com.example.haritmoolphunt.facebookfeed.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -21,6 +22,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.Toast;
 
+import com.example.haritmoolphunt.facebookfeed.LayoutManager.SpeedyLinearLayoutManager;
 import com.example.haritmoolphunt.facebookfeed.Listener.HidingScrollListener;
 import com.example.haritmoolphunt.facebookfeed.R;
 import com.example.haritmoolphunt.facebookfeed.adapter.FeedListAdapter;
@@ -35,6 +37,7 @@ import com.example.haritmoolphunt.facebookfeed.manager.AppTokenManager;
 import com.example.haritmoolphunt.facebookfeed.manager.FeedListManager;
 import com.example.haritmoolphunt.facebookfeed.manager.FeedVideoManager;
 import com.example.haritmoolphunt.facebookfeed.manager.PageProfileManager;
+import com.example.haritmoolphunt.facebookfeed.manager.RecyclerviewPosition;
 import com.example.haritmoolphunt.facebookfeed.manager.UserProfileManager;
 import com.example.haritmoolphunt.facebookfeed.manager.helper.InternetCheck;
 import com.example.haritmoolphunt.facebookfeed.manager.helper.NameListCollector;
@@ -51,6 +54,7 @@ import com.facebook.login.LoginResult;
 import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONObject;
 
 import java.time.LocalDate;
@@ -118,7 +122,7 @@ public class FeedFragment extends Fragment {
         //       in onSavedInstanceState]
         recyclerView = rootView.findViewById(R.id.recyclerview);
         feedListAdapter = new FeedListAdapter();
-        final LinearLayoutManager llm = new LinearLayoutManager(getActivity()
+        final SpeedyLinearLayoutManager llm = new SpeedyLinearLayoutManager(getActivity()
                 , LinearLayoutManager.VERTICAL
                 , false);
         recyclerView.setLayoutManager(llm);
@@ -142,6 +146,7 @@ public class FeedFragment extends Fragment {
                 }else{
                     isLoadingMore = false;
                 }
+                RecyclerviewPosition.getInstance().setPosition(firstVisiblesItems);
             }
         });
 
@@ -174,7 +179,7 @@ public class FeedFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if(internet_connection())
+                if(InternetCheck.internet_connection(getActivity()))
                     loadData();
                 else
                     Snackbar.make(getView(),"No internet connection.",Snackbar.LENGTH_LONG).show();
@@ -182,7 +187,7 @@ public class FeedFragment extends Fragment {
             }
         });
 
-        if(internet_connection()) {
+        if(InternetCheck.internet_connection(getActivity())) {
             loadData();
         }else
             Toast.makeText(getContext(),"No internet connection",Toast.LENGTH_LONG).show();
@@ -200,23 +205,6 @@ public class FeedFragment extends Fragment {
     }
 
     private void loadData() {
-        IGProfileService service = FeedListManager.getInstance().getService();
-        String igID = NameListCollector.findIgFromFbID(pageID);
-        Call<IG_dao> igDaoCall = service.getIgProfileDao(igID);
-
-        igDaoCall.enqueue(new Callback<IG_dao>() {
-            @Override
-            public void onResponse(Call<IG_dao> call, Response<IG_dao> response) {
-                UserProfileManager.getInstance().setIg_dao(response.body());
-                Log.d("check1",response.body().getLoggingPageId());
-            }
-
-            @Override
-            public void onFailure(Call<IG_dao> call, Throwable t) {
-
-            }
-        });
-
         GraphRequest request1 = getFeedGraphRequest();
         // request.executeAsync();
 
@@ -334,16 +322,21 @@ public class FeedFragment extends Fragment {
         return request;
     }
 
-    boolean internet_connection(){
-        //Check if connected to internet, output accordingly
-        ConnectivityManager cm =
-                (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
 
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
 
-        return isConnected;
+    @Subscribe
+    public void onMessageEvent(BusEvent.ScrollUpEvent event) {
+        recyclerView.smoothScrollToPosition(0);
     }
 
 }
