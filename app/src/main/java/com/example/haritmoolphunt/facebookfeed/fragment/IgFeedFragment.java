@@ -1,14 +1,10 @@
 package com.example.haritmoolphunt.facebookfeed.fragment;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,13 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.haritmoolphunt.facebookfeed.LayoutManager.SpeedyLinearLayoutManager;
+import com.example.haritmoolphunt.facebookfeed.layoutManager.SpeedyLinearLayoutManager;
 import com.example.haritmoolphunt.facebookfeed.R;
-import com.example.haritmoolphunt.facebookfeed.activity.MainActivity;
-import com.example.haritmoolphunt.facebookfeed.adapter.FeedListAdapter;
 import com.example.haritmoolphunt.facebookfeed.adapter.IgFeedAdapter;
 import com.example.haritmoolphunt.facebookfeed.dao.ig_dao.IG_dao;
-import com.example.haritmoolphunt.facebookfeed.dao.ig_feed_data.Data;
 import com.example.haritmoolphunt.facebookfeed.dao.ig_feed_data.IG_feed_dao;
 import com.example.haritmoolphunt.facebookfeed.event.BusEvent;
 import com.example.haritmoolphunt.facebookfeed.manager.FeedListManager;
@@ -30,27 +23,15 @@ import com.example.haritmoolphunt.facebookfeed.manager.FeedListManager;
 import com.example.haritmoolphunt.facebookfeed.manager.RecyclerviewPosition;
 import com.example.haritmoolphunt.facebookfeed.manager.UserProfileManager;
 import com.example.haritmoolphunt.facebookfeed.manager.helper.InternetCheck;
-import com.example.haritmoolphunt.facebookfeed.manager.helper.NameListCollector;
 import com.example.haritmoolphunt.facebookfeed.manager.http.IGProfileService;
-import com.example.haritmoolphunt.facebookfeed.template.Contextor;
-import com.facebook.AccessToken;
-import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.io.IOException;
-
-import javax.xml.datatype.Duration;
-
 import cn.jzvd.JZVideoPlayer;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Harit Moolphunt on 24/3/2561.

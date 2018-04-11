@@ -1,4 +1,4 @@
-package com.example.haritmoolphunt.facebookfeed.LayoutManager;
+package com.example.haritmoolphunt.facebookfeed.layoutManager;
 
 import android.content.Context;
 import android.graphics.PointF;

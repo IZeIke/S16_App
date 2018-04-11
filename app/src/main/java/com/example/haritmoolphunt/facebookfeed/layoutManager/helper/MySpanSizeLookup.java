@@ -1,4 +1,4 @@
-package com.example.haritmoolphunt.facebookfeed.LayoutManager.Helper;
+package com.example.haritmoolphunt.facebookfeed.layoutManager.helper;
 
 /**
  * Created by Harit Moolphunt on 12/2/2561.

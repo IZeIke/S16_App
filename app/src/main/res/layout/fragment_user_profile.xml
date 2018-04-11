@@ -68,7 +68,7 @@
                 android:id="@+id/name_RecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="200dp"
+                android:layout_marginBottom="40dp"
                 android:background="@color/white"></android.support.v7.widget.RecyclerView>
 
            <!-- <com.example.haritmoolphunt.facebookfeed.view.BandListItem

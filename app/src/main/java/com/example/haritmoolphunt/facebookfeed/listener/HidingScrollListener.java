@@ -1,4 +1,4 @@
-package com.example.haritmoolphunt.facebookfeed.Listener;
+package com.example.haritmoolphunt.facebookfeed.listener;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;

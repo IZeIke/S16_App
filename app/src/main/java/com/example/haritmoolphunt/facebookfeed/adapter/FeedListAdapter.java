@@ -1,56 +1,28 @@
 package com.example.haritmoolphunt.facebookfeed.adapter;
 
-import android.content.Context;
-import android.content.Intent;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.Target;
-import com.example.haritmoolphunt.facebookfeed.LayoutManager.Helper.MySpanSizeLookup;
-import com.example.haritmoolphunt.facebookfeed.LayoutManager.SpannedGridLayoutManager;
 import com.example.haritmoolphunt.facebookfeed.R;
-import com.example.haritmoolphunt.facebookfeed.activity.PhotoActivity;
 import com.example.haritmoolphunt.facebookfeed.dao.FeedData;
-import com.example.haritmoolphunt.facebookfeed.dao.Image;
 import com.example.haritmoolphunt.facebookfeed.dao.PageProfile;
-import com.example.haritmoolphunt.facebookfeed.dao.Posts;
 import com.example.haritmoolphunt.facebookfeed.event.BusEvent;
 import com.example.haritmoolphunt.facebookfeed.manager.FeedListManager;
 import com.example.haritmoolphunt.facebookfeed.manager.FeedVideoManager;
 import com.example.haritmoolphunt.facebookfeed.manager.PageProfileManager;
-import com.example.haritmoolphunt.facebookfeed.template.Contextor;
-import com.example.haritmoolphunt.facebookfeed.view.FeedListItem;
-import com.felipecsl.asymmetricgridview.library.Utils;
-import com.felipecsl.asymmetricgridview.library.model.AsymmetricItem;
-import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridView;
-import com.felipecsl.asymmetricgridview.library.widget.AsymmetricGridViewAdapter;
-import com.github.chrisbanes.photoview.PhotoView;
 import com.pchmn.materialchips.ChipView;
-import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
 
 import cn.jzvd.JZVideoPlayerStandard;
 

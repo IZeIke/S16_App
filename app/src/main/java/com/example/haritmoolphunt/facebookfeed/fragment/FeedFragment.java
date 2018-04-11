@@ -1,70 +1,44 @@
 package com.example.haritmoolphunt.facebookfeed.fragment;
 
-import android.app.Activity;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.DecelerateInterpolator;
-import android.widget.AbsListView;
 import android.widget.Toast;
 
-import com.example.haritmoolphunt.facebookfeed.LayoutManager.SpeedyLinearLayoutManager;
-import com.example.haritmoolphunt.facebookfeed.Listener.HidingScrollListener;
+import com.example.haritmoolphunt.facebookfeed.layoutManager.SpeedyLinearLayoutManager;
 import com.example.haritmoolphunt.facebookfeed.R;
 import com.example.haritmoolphunt.facebookfeed.adapter.FeedListAdapter;
 import com.example.haritmoolphunt.facebookfeed.dao.PageProfile;
 import com.example.haritmoolphunt.facebookfeed.dao.Posts;
-import com.example.haritmoolphunt.facebookfeed.dao.UserProfile;
-import com.example.haritmoolphunt.facebookfeed.dao.ig_dao.IG_dao;
 import com.example.haritmoolphunt.facebookfeed.dao.video_dao.Video;
 import com.example.haritmoolphunt.facebookfeed.event.BusEvent;
-import com.example.haritmoolphunt.facebookfeed.manager.AccessTokenManager;
 import com.example.haritmoolphunt.facebookfeed.manager.AppTokenManager;
 import com.example.haritmoolphunt.facebookfeed.manager.FeedListManager;
 import com.example.haritmoolphunt.facebookfeed.manager.FeedVideoManager;
 import com.example.haritmoolphunt.facebookfeed.manager.PageProfileManager;
 import com.example.haritmoolphunt.facebookfeed.manager.RecyclerviewPosition;
-import com.example.haritmoolphunt.facebookfeed.manager.UserProfileManager;
 import com.example.haritmoolphunt.facebookfeed.manager.helper.InternetCheck;
-import com.example.haritmoolphunt.facebookfeed.manager.helper.NameListCollector;
-import com.example.haritmoolphunt.facebookfeed.manager.http.IGProfileService;
-import com.example.haritmoolphunt.facebookfeed.template.Contextor;
-import com.example.haritmoolphunt.facebookfeed.template.FragmentTemplateFull;
-import com.example.haritmoolphunt.facebookfeed.view.SimpleDividerItemDecoration;
 import com.facebook.AccessToken;
-import com.facebook.AccessTokenSource;
 import com.facebook.GraphRequest;
 import com.facebook.GraphRequestBatch;
 import com.facebook.GraphResponse;
-import com.facebook.login.LoginResult;
 import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.json.JSONObject;
 
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
 import cn.jzvd.JZVideoPlayer;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Created by Harit Moolphunt on 10/1/2561.
@@ -130,6 +104,7 @@ public class FeedFragment extends Fragment {
         recyclerView.setNestedScrollingEnabled(true);
         recyclerView.setHasFixedSize(false);
         recyclerView.setAdapter(feedListAdapter);
+
         //recyclerView.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
             int firstVisiblesItems, visibleItemCount, totalItemCount;
