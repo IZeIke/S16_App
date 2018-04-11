@@ -96,6 +96,12 @@ public class FeedFragment extends Fragment {
         //       in onSavedInstanceState]
         recyclerView = rootView.findViewById(R.id.recyclerview);
         feedListAdapter = new FeedListAdapter();
+        feedListAdapter.setOnProfileClickedListener(new FeedListAdapter.ProfileActivityEventListener() {
+            @Override
+            public void onProfileClicked() {
+                EventBus.getDefault().post(new BusEvent.ProfileActivityEvent());
+            }
+        });
         final SpeedyLinearLayoutManager llm = new SpeedyLinearLayoutManager(getActivity()
                 , LinearLayoutManager.VERTICAL
                 , false);
@@ -104,7 +110,6 @@ public class FeedFragment extends Fragment {
         recyclerView.setNestedScrollingEnabled(true);
         recyclerView.setHasFixedSize(false);
         recyclerView.setAdapter(feedListAdapter);
-
         //recyclerView.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
             int firstVisiblesItems, visibleItemCount, totalItemCount;

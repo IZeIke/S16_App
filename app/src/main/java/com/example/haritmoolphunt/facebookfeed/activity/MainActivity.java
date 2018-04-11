@@ -31,6 +31,7 @@ import android.view.animation.DecelerateInterpolator;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.example.haritmoolphunt.facebookfeed.R;
+import com.example.haritmoolphunt.facebookfeed.adapter.FeedListAdapter;
 import com.example.haritmoolphunt.facebookfeed.dao.Accesstoken;
 import com.example.haritmoolphunt.facebookfeed.dao.UserProfile;
 import com.example.haritmoolphunt.facebookfeed.event.BusEvent;
@@ -402,5 +403,7 @@ public class MainActivity extends AppCompatActivity {
 
         return items;
     }
+
+
 }
 

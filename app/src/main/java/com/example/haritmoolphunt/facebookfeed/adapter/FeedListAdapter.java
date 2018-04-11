@@ -36,6 +36,13 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private int FEED_PICTURE_ITEM = 2;
     private int FEED_VIDEO_ITEM = 3;
 
+    private ProfileActivityEventListener profileActivityCallback;
+
+    public void setOnProfileClickedListener(ProfileActivityEventListener l)
+    {
+        profileActivityCallback = l;
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
       //  FeedListItem view = new FeedListItem(parent.getContext());
@@ -204,21 +211,32 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     }
 
-    public void setClickProfileImage(View profileImageView, final TextView textView){
+    public void setClickProfileImage(final View profileImageView, final TextView textView){
 
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EventBus.getDefault().post(new BusEvent.ProfileActivityEvent());
+                if(profileActivityCallback != null)
+                {
+                    profileActivityCallback.onProfileClicked();
+                }
             }
         });
 
         profileImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EventBus.getDefault().post(new BusEvent.ProfileActivityEvent());
+                if(profileActivityCallback != null)
+                {
+                    profileActivityCallback.onProfileClicked();
+                }
             }
         });
+    }
+
+    public interface ProfileActivityEventListener {
+
+        void onProfileClicked();
     }
 
     @Override
