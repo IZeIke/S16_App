@@ -104,9 +104,9 @@
    <FrameLayout
        android:id="@+id/menuContainer"
        android:layout_gravity="start"
-       android:layout_width="300dp"
+       android:layout_width="250dp"
        android:layout_height="match_parent"
-       android:background="#424242"
+       android:background="#ffffff"
        ></FrameLayout>
 
 

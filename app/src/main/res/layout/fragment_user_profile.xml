@@ -27,7 +27,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/moo" />
+                    android:src="@drawable/mahnmook" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -58,11 +58,6 @@
 
                 </LinearLayout>
             </RelativeLayout>
-
-            <com.example.haritmoolphunt.facebookfeed.view.BandListItem
-                android:id="@+id/sweat16_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/name_RecyclerView"

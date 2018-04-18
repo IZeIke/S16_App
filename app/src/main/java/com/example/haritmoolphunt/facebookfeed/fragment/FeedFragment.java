@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +52,6 @@ public class FeedFragment extends Fragment {
     FeedListAdapter feedListAdapter;
     SwipeRefreshLayout swipeRefreshLayout;
     boolean isLoadingMore = false;
-    AccessToken PageAT;
 
     public FeedFragment() {
         super();
@@ -87,6 +87,7 @@ public class FeedFragment extends Fragment {
     @SuppressWarnings("UnusedParameters")
     private void init(Bundle savedInstanceState) {
         // Init Fragment level's variable(s) here
+
     }
 
     @SuppressWarnings("UnusedParameters")
@@ -109,6 +110,7 @@ public class FeedFragment extends Fragment {
         //recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
         recyclerView.setNestedScrollingEnabled(true);
         recyclerView.setHasFixedSize(false);
+
         recyclerView.setAdapter(feedListAdapter);
         //recyclerView.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener(){
@@ -142,19 +144,6 @@ public class FeedFragment extends Fragment {
             }
         });
 
-        /*recyclerView.addOnScrollListener(new HidingScrollListener() {
-            @Override
-            public void onHide() {
-                EventBus.getDefault().post(new BusEvent.HideEvent());
-                //hideViews();
-            }
-            @Override
-            public void onShow() {
-                //showViews();
-                EventBus.getDefault().post(new BusEvent.ShowEvent());
-            }
-        }); */
-
         swipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -168,7 +157,9 @@ public class FeedFragment extends Fragment {
         });
 
         if(InternetCheck.internet_connection(getActivity())) {
-            loadData();
+            if(savedInstanceState == null) {
+                loadData();
+            }
         }else
             Toast.makeText(getContext(),"No internet connection",Toast.LENGTH_LONG).show();
     }
@@ -177,11 +168,16 @@ public class FeedFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         // Save Instance (Fragment level's variables) State here
+        outState.putString("pageId",pageID);
+        outState.putBundle("feedListManager",FeedListManager.getInstance().onSaveInstanceState());
     }
 
     @SuppressWarnings("UnusedParameters")
     private void onRestoreInstanceState(Bundle savedInstanceState) {
         // Restore Instance (Fragment level's variables) State here
+        FeedListManager.getInstance().onRestoreInstanceState(savedInstanceState.getBundle("feedListManager"));
+        pageID = savedInstanceState.getString("pageId");
+        Log.d("pageId", "onRestoreInstanceState: "+ pageID);
     }
 
     private void loadData() {

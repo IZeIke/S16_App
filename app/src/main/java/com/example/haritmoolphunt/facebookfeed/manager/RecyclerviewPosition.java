@@ -4,9 +4,7 @@ import android.content.Context;
 
 import com.example.haritmoolphunt.facebookfeed.template.Contextor;
 
-/**
- * Created by nuuneoi on 11/16/2014.
- */
+
 public class RecyclerviewPosition {
 
     private static RecyclerviewPosition instance;

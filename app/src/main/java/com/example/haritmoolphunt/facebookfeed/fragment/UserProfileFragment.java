@@ -41,14 +41,14 @@ import cn.jzvd.JZVideoPlayer;
 /**
  * Created by nuuneoi on 11/16/2014.
  */
-public class UserProfileFragment extends Fragment {
+public class UserProfileFragment extends Fragment{
 
 
     RecyclerView recyclerView;
     RecyclerView bnkRecyclerView;
     NameListAdapter nameListAdapter;
     NameListAdapter bnkListAdapter;
-    BandListItem sweatButton;
+    //BandListItem sweatButton;
     BandListItem bnkButton;
     //ImageView profilePicture;
     //TextView userName;
@@ -98,10 +98,10 @@ public class UserProfileFragment extends Fragment {
         //       in onSavedInstanceState
         //userName = rootView.findViewById(R.id.user_profile_name);
         //profilePicture = rootView.findViewById(R.id.user_profile_picture);
-        sweatButton = rootView.findViewById(R.id.sweat16_button);
+       // sweatButton = rootView.findViewById(R.id.sweat16_button);
         //bnkButton = rootView.findViewById(R.id.bnk48_button);
-        sweatButton.setName("SWEAT16!");
-        sweatButton.setPicture(getResources().getDrawable(R.drawable.sweat16logo));
+       // sweatButton.setName("SWEAT16!");
+       // sweatButton.setPicture(getResources().getDrawable(R.drawable.sweat16logo));
         //bnkButton.setName("BNK48");
         //bnkButton.setPicture(getResources().getDrawable(R.drawable.bnk48logo));
 
@@ -141,7 +141,7 @@ public class UserProfileFragment extends Fragment {
         recyclerView.setLayoutManager(llm1);
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setAdapter(nameListAdapter);
-        recyclerView.setVisibility(View.GONE);
+        //recyclerView.setVisibility(View.GONE);
         nameListAdapter.notifyDataSetChanged();
 
        // bnkRecyclerView.setLayoutManager(llm2);
@@ -170,7 +170,7 @@ public class UserProfileFragment extends Fragment {
                 }
         ); */
 
-        sweatButton.setOnClickListener(new View.OnClickListener() {
+      /*  sweatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(recyclerView.getVisibility() == View.VISIBLE)
@@ -178,7 +178,7 @@ public class UserProfileFragment extends Fragment {
                 else
                     recyclerView.setVisibility(View.VISIBLE);
             }
-        });
+        }); */
 
 /*        bnkButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -201,5 +201,4 @@ public class UserProfileFragment extends Fragment {
     private void onRestoreInstanceState(Bundle savedInstanceState) {
         // Restore Instance (Fragment level's variables) State here
     }
-
 }

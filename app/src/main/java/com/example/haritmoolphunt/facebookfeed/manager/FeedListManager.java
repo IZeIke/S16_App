@@ -1,6 +1,7 @@
 package com.example.haritmoolphunt.facebookfeed.manager;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.example.haritmoolphunt.facebookfeed.dao.FeedData;
@@ -10,6 +11,7 @@ import com.example.haritmoolphunt.facebookfeed.dao.ig_feed_data.Edge;
 import com.example.haritmoolphunt.facebookfeed.dao.ig_feed_data.IG_feed_dao;
 import com.example.haritmoolphunt.facebookfeed.manager.http.IGProfileService;
 import com.example.haritmoolphunt.facebookfeed.template.Contextor;
+import com.example.haritmoolphunt.facebookfeed.template.state.BundleSavedState;
 
 import org.cryse.widget.persistentsearch.SearchItem;
 
@@ -21,9 +23,6 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-/**
- * Created by nuuneoi on 11/16/2014.
- */
 public class FeedListManager {
 
     private static FeedListManager instance;
@@ -128,4 +127,15 @@ public class FeedListManager {
     public IGProfileService getService() {
         return service;
     }
+
+    public Bundle onSaveInstanceState() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("dao",dao);
+        return bundle;
+    }
+
+    public void onRestoreInstanceState(Bundle savedInstanceState){
+        dao = savedInstanceState.getParcelable("dao");
+    }
+
 }

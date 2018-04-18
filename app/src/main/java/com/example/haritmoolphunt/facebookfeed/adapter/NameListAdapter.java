@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,9 +19,15 @@ import com.example.haritmoolphunt.facebookfeed.R;
 public class NameListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     String[] nameList;
+    private ClickListener clickListener;
 
     public NameListAdapter(String[] namelist){
         nameList = namelist;
+    }
+
+    public NameListAdapter(String[] namelist,ClickListener clickListener){
+        nameList = namelist;
+        this.clickListener = clickListener;
     }
 
     @Override
@@ -45,12 +52,16 @@ public class NameListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public class ViewHolder extends RecyclerView.ViewHolder
     {
 
-        TextView textView;
+        Button textView;
 
         public ViewHolder(View view) {
             super(view);
             textView = view.findViewById(R.id.name_textview);
         }
+    }
+
+    public interface ClickListener {
+        void onPositionClicked(int position);
     }
 
 }

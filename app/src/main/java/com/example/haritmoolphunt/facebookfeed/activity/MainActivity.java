@@ -3,6 +3,7 @@ package com.example.haritmoolphunt.facebookfeed.activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
@@ -95,11 +96,14 @@ public class MainActivity extends AppCompatActivity {
 
         if(savedInstanceState == null)
         {
+            SharedPreferences sp = getSharedPreferences("lastestPage", Context.MODE_PRIVATE);
+            String pageId = sp.getString("lastPageId",getString(R.string.Mahnmook));
+            getSupportActionBar().setTitle(findNameFromFbID(pageId));
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.menuContainer, UserProfileFragment.newInstance())
                     .commit();
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.contentContainer, ViewPagerMainFragment.newInstance(getString(R.string.Mahnmook)))
+                    .add(R.id.contentContainer, ViewPagerMainFragment.newInstance(pageId))
                     .commit();
         }
     }
@@ -279,6 +283,10 @@ public class MainActivity extends AppCompatActivity {
     @Subscribe
     public void onChangePage(String pageId) {
         //getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        SharedPreferences sp = getSharedPreferences("lastestPage", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("lastPageId", pageId);
+        editor.commit();
         getSupportActionBar().setTitle(findNameFromFbID(pageId));
         nameListCollector.setFbId(pageId);
         if(bottomNavigation.getCurrentItem() == 0) {
@@ -404,6 +412,14 @@ public class MainActivity extends AppCompatActivity {
         return items;
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
 
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 }
 
